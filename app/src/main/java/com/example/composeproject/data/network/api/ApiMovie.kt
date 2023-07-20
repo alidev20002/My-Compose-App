@@ -24,7 +24,7 @@ interface ApiMovie {
         fun getInstance() : ApiMovie {
             if (apiService == null) {
                 apiService = Retrofit.Builder()
-                    .baseUrl("")
+                    .baseUrl("https://moviesapi.ir/api/v1/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build().create(ApiMovie::class.java)
             }
