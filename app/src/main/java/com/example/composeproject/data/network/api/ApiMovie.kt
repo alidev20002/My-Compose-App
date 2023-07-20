@@ -1,4 +1,4 @@
-package com.example.composeproject.api
+package com.example.composeproject.data.network.api
 
 import com.example.composeproject.model.FullMovieData
 import com.example.composeproject.model.MovieData
