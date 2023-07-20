@@ -30,9 +30,7 @@ import com.example.composeproject.viewmodel.MovieViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.concurrent.Flow
 
 class MainActivity : ComponentActivity() {
 
