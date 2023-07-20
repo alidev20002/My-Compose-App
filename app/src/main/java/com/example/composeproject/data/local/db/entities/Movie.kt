@@ -11,7 +11,7 @@ data class Movie(
     val poster: String,
     val year: String,
     val country: String,
-    val imdb_rating: String,
+    val imdbRating: String,
     val genres: List<String>,
     val images: List<String>
 )
