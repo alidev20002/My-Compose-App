@@ -17,7 +17,7 @@ data class MovieEntity(
     val images: List<String>
 )
 
-fun MovieEntity.toEntityModel(): FullMovie {
+fun MovieEntity.toFullMovieModel(): FullMovie {
     return FullMovie(
         title = this.title,
         poster = this.poster,

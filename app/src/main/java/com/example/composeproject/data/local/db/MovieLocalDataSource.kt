@@ -10,7 +10,7 @@ class MovieLocalDataSource(private val movieDao: MovieDao) {
         return movieDao.getAllMovies()
     }
 
-    suspend fun insertMovie(movie: MovieEntity) {
-        movieDao.insertMovie(movie)
+    suspend fun insertMovies(movies: List<MovieEntity>) {
+        movieDao.insertMovies(movies)
     }
 }
