@@ -7,9 +7,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.composeproject.data.local.db.converters.MovieConverter
 import com.example.composeproject.data.local.db.daos.MovieDao
-import com.example.composeproject.data.local.db.entities.Movie
+import com.example.composeproject.data.local.db.entities.MovieEntity
 
-@Database(entities = [Movie::class], version = 1)
+@Database(entities = [MovieEntity::class], version = 1)
 @TypeConverters(MovieConverter::class)
 abstract class MovieDatabase: RoomDatabase() {
     abstract fun movieDao(): MovieDao
