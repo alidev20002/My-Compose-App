@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val TAG = "alitest"
+    private val tag = "alitest"
     private val movieViewModel by viewModels<MovieViewModel>()
     private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             movies.collect {
-                Log.i("alitest", "onCreate: $it")
+                Log.i(tag, "onCreate: $it")
             }
         }
 
