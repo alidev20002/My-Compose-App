@@ -65,7 +65,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.composeproject.viewmodel.MovieViewModel
 import com.example.composeproject.R
-import com.example.composeproject.model.FullMovieData
+import com.example.composeproject.data.network.model.FullMovieData
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)

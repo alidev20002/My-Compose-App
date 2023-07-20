@@ -1,7 +1,7 @@
 package com.example.composeproject.data.network
 
 import com.example.composeproject.data.network.api.ApiMovie
-import com.example.composeproject.model.FullMovie
+import com.example.composeproject.data.network.model.FullMovie
 
 class MovieRemoteDataSource(private val apiMovie: ApiMovie) {
 
