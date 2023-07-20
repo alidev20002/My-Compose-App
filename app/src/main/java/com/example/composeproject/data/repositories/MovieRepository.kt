@@ -1,7 +1,6 @@
 package com.example.composeproject.data.repositories
 
 import com.example.composeproject.data.local.db.MovieLocalDataSource
-import com.example.composeproject.data.local.db.entities.MovieEntity
 import com.example.composeproject.data.local.db.entities.toFullMovieModel
 import com.example.composeproject.data.network.MovieRemoteDataSource
 import com.example.composeproject.data.network.model.FullMovie
