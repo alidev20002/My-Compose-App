@@ -2,6 +2,7 @@ package com.example.composeproject.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.composeproject.data.network.model.FullMovie
 
 @Entity(tableName = "movie")
 data class MovieEntity(
@@ -15,3 +16,15 @@ data class MovieEntity(
     val genres: List<String>,
     val images: List<String>
 )
+
+fun MovieEntity.toEntityModel(): FullMovie {
+    return FullMovie(
+        title = this.title,
+        poster = this.poster,
+        year = this.year,
+        country = this.country,
+        imdb_rating = this.imdbRating,
+        genres = this.genres,
+        images = this.images
+    )
+}
