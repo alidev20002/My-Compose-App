@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.composeproject.R
-import com.example.composeproject.model.DrawerItem
+import com.example.composeproject.data.network.model.DrawerItem
 
 @Composable
 fun DrawerContent(navController: NavController) {
