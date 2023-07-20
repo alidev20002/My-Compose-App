@@ -1,5 +1,6 @@
 package com.example.composeproject.data.network.model
 
+import com.example.composeproject.data.local.db.entities.MovieEntity
 import com.google.gson.annotations.SerializedName
 
 data class MovieData(@SerializedName("data") val data: List<Movie>)
@@ -17,3 +18,15 @@ data class FullMovie(@SerializedName("title") val title: String,
                      @SerializedName("imdb_rating") val imdb_rating: String,
                      @SerializedName("genres") val genres: List<String>,
                      @SerializedName("images") val images: List<String>)
+
+fun FullMovie.toEntityModel(): MovieEntity {
+    return MovieEntity(
+        title = this.title,
+        poster = this.poster,
+        year = this.year,
+        country = this.country,
+        imdbRating = this.imdb_rating,
+        genres = this.genres,
+        images = this.images
+    )
+}
