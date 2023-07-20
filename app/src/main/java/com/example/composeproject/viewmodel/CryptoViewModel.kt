@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composeproject.api.ApiCrypto
-import com.example.composeproject.model.CryptoStats
+import com.example.composeproject.data.network.model.CryptoStats
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

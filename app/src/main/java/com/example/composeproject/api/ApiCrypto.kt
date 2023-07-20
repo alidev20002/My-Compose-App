@@ -1,6 +1,6 @@
 package com.example.composeproject.api
 
-import com.example.composeproject.model.CryptoStats
+import com.example.composeproject.data.network.model.CryptoStats
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET

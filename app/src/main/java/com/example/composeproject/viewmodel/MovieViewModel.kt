@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.composeproject.api.ApiMovie
-import com.example.composeproject.model.FullMovieData
-import com.example.composeproject.model.MovieData
+import com.example.composeproject.data.network.api.ApiMovie
+import com.example.composeproject.data.network.model.FullMovieData
+import com.example.composeproject.data.network.model.MovieData
 import kotlinx.coroutines.launch
 
 class MovieViewModel: ViewModel() {
