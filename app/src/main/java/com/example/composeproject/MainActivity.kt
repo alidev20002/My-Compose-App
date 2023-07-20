@@ -1,6 +1,5 @@
 package com.example.composeproject
 
-
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -37,6 +36,7 @@ import java.util.concurrent.Flow
 
 class MainActivity : ComponentActivity() {
 
+    private val TAG = "alitest"
     private val movieViewModel by viewModels<MovieViewModel>()
     private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
@@ -117,7 +117,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 /*
 @Preview(widthDp = 360, heightDp = 640)
