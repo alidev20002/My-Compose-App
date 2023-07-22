@@ -13,18 +13,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.composeproject.data.local.db.MovieDatabase
-import com.example.composeproject.data.local.db.entities.Movie
+import com.example.composeproject.data.local.db.MovieLocalDataSource
+import com.example.composeproject.data.local.db.entities.MovieEntity
+import com.example.composeproject.data.network.MovieRemoteDataSource
+import com.example.composeproject.data.network.api.ApiMovie
+import com.example.composeproject.data.repositories.MovieRepository
 import com.example.composeproject.ui.CryptoPage
 import com.example.composeproject.ui.FullMoviePage
 import com.example.composeproject.ui.MoviePage
 import com.example.composeproject.ui.SplashScreen
 import com.example.composeproject.ui.TaskList
 import com.example.composeproject.ui.theme.ComposeProjectTheme
+import com.example.composeproject.ui.viewmodels.MovieViewModelFactory
 import com.example.composeproject.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.MovieViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
@@ -46,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
         val db = MovieDatabase.getDatabase(this)
         val movieDao = db.movieDao()
-        val movie = Movie(
+        val movie = MovieEntity(
             title = "Avengers",
             poster = "",
             year = "2021",
@@ -59,7 +65,15 @@ class MainActivity : ComponentActivity() {
             movieDao.insertMovie(movie)
         }
 
-        val movies = movieDao.getAllMovies()
+        val movieLocalDataSource = MovieLocalDataSource(movieDao)
+        val movieRemoteDataSource = MovieRemoteDataSource(ApiMovie.getInstance())
+        val movieRepository = MovieRepository(movieLocalDataSource, movieRemoteDataSource)
+        val movieViewModel = ViewModelProvider(this, MovieViewModelFactory(movieRepository)).get(com.example.composeproject.ui.viewmodels.MovieViewModel::class.java)
+
+
+        val movies = movieViewModel.allMovies
+        movieViewModel.getAllMovies()
+        Log.i(tag, "onCreate: Start")
 
         lifecycleScope.launch {
             movies.collect {
@@ -67,52 +81,54 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        setContent {  }
+
         // #########################################
 
-        setContent {
-            var isLightTheme by rememberSaveable { mutableStateOf(true) }
-            val navController = rememberNavController()
-
-            ComposeProjectTheme (darkTheme = !isLightTheme) {
-
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background) {
-
-                    NavHost(navController = navController,
-                        startDestination = "splash") {
-
-                        composable("splash") {
-                            SplashScreen(navController)
-                        }
-                        composable("movie") {
-                            MoviePage(movieViewModel,
-                                isLightTheme,
-                                navController,
-                                onChangeTheme = {isLightTheme = !isLightTheme}
-                            )
-
-                            movieViewModel.getMovieList()
-                        }
-                        composable("fullMovie") {
-                            FullMoviePage(movieViewModel.fullMovieResponse,
-                                isLightTheme,
-                                navController) {
-                                isLightTheme = !isLightTheme
-                            }
-
-                            movieViewModel.getFullMovie()
-                        }
-                        composable("crypto") {
-                            CryptoPage(cryptoViewModel.cryptoStats)
-                            cryptoViewModel.getCryptoStats()
-                        }
-                        composable("task") {
-                            TaskList(taskViewModel)
-                        }
-                    }
-                }
-            }
-        }
+//        setContent {
+//            var isLightTheme by rememberSaveable { mutableStateOf(true) }
+//            val navController = rememberNavController()
+//
+//            ComposeProjectTheme (darkTheme = !isLightTheme) {
+//
+//                Surface(modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colors.background) {
+//
+//                    NavHost(navController = navController,
+//                        startDestination = "splash") {
+//
+//                        composable("splash") {
+//                            SplashScreen(navController)
+//                        }
+//                        composable("movie") {
+//                            MoviePage(movieViewModel,
+//                                isLightTheme,
+//                                navController,
+//                                onChangeTheme = {isLightTheme = !isLightTheme}
+//                            )
+//
+//                            movieViewModel.getMovieList()
+//                        }
+//                        composable("fullMovie") {
+//                            FullMoviePage(movieViewModel.fullMovieResponse,
+//                                isLightTheme,
+//                                navController) {
+//                                isLightTheme = !isLightTheme
+//                            }
+//
+//                            movieViewModel.getFullMovie()
+//                        }
+//                        composable("crypto") {
+//                            CryptoPage(cryptoViewModel.cryptoStats)
+//                            cryptoViewModel.getCryptoStats()
+//                        }
+//                        composable("task") {
+//                            TaskList(taskViewModel)
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
