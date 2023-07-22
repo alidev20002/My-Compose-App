@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
             images = emptyList()
         )
         CoroutineScope(Dispatchers.IO).launch {
-            movieDao.insertMovie(movie)
+            movieDao.insertOrIgnoreMovie(movie)
         }
 
         val movies = movieDao.getAllMovies()
