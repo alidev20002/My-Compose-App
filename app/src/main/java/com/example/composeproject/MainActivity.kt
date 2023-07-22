@@ -5,19 +5,34 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.composeproject.data.local.db.MovieDatabase
 import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.local.db.entities.MovieEntity
@@ -45,6 +60,7 @@ class MainActivity : ComponentActivity() {
     private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
 
+    @OptIn(ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,19 +68,6 @@ class MainActivity : ComponentActivity() {
 
         val db = MovieDatabase.getDatabase(this)
         val movieDao = db.movieDao()
-        val movie = MovieEntity(
-            title = "Avengers",
-            poster = "",
-            year = "2021",
-            country = "US",
-            imdbRating = "8.2",
-            genres = listOf("Action", "Sci-Fi", "Fantasy", "Adventure"),
-            images = emptyList()
-        )
-        CoroutineScope(Dispatchers.IO).launch {
-            movieDao.insertMovie(movie)
-        }
-
         val movieLocalDataSource = MovieLocalDataSource(movieDao)
         val movieRemoteDataSource = MovieRemoteDataSource(ApiMovie.getInstance())
         val movieRepository = MovieRepository(movieLocalDataSource, movieRemoteDataSource)
@@ -81,7 +84,23 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        setContent {  }
+        setContent { 
+            val movieItems by movies.collectAsState()
+            LazyColumn(modifier = Modifier) {
+                itemsIndexed(movieItems, key = {index, _ -> index}) {_, item ->
+                    Row(modifier = Modifier.padding(5.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        GlideImage(
+                            model = item.poster,
+                            contentDescription = "poster",
+                            modifier = Modifier.clip(CircleShape).size(50.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(text = item.title)
+                        Text(text = item.year)
+                    }
+                }
+            }
+        }
 
         // #########################################
 
