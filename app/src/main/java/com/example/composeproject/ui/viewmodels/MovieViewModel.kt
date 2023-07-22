@@ -16,6 +16,7 @@ class MovieViewModel(private val movieRepository: MovieRepository): ViewModel() 
 
     fun getAllMovies() {
         viewModelScope.launch {
+            movieRepository.updateMovies()
             val movies = movieRepository.fetchMovies()
             movies.collect {
                 _allMovies.value = it
