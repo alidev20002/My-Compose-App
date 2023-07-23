@@ -26,8 +26,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.example.composeproject.R
-import com.example.composeproject.model.CryptoRandom
-import com.example.composeproject.model.CryptoStats
+import com.example.composeproject.data.network.model.CryptoRandom
+import com.example.composeproject.data.network.model.CryptoStats
 
 @Composable
 fun CryptoPage(cryptoStats: CryptoStats) {
