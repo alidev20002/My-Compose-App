@@ -4,9 +4,9 @@ import android.util.Log
 import com.example.composeproject.data.network.api.ApiMovie
 import com.example.composeproject.data.network.model.FullMovie
 
-class MovieRemoteDataSource(private val apiMovie: ApiMovie) {
+class MovieRemoteDataSource(private val apiMovie: ApiMovie): MovieRemoteDataSourceInterface {
 
-    suspend fun getAllMovies(): List<FullMovie> {
+    override suspend fun getAllMovies(): List<FullMovie> {
         try {
             val response = apiMovie.getAllMovies(0, "")
             Log.i("alitest", "getAllMovies: $response")
