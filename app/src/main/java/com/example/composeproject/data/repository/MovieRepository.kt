@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.map
 class MovieRepository(
     private val movieLocalDataSource: MovieLocalDataSource,
     private val movieRemoteDataSource: MovieRemoteDataSource
-) {
+): MovieRepositoryInterface {
 
-    suspend fun syncMovies() {
+    override suspend fun syncMovies() {
         val movies = movieRemoteDataSource.getAllMovies()
         movieLocalDataSource.insertOrIgnoreMovies(
             movies.map {
@@ -22,7 +22,7 @@ class MovieRepository(
         )
     }
 
-    fun getMovies(): Flow<List<FullMovie>> {
+    override fun getMovies(): Flow<List<FullMovie>> {
         return movieLocalDataSource.getAllMovies().map { movieEntities ->
             movieEntities.map { movieEntity ->
                 movieEntity.toFullMovieModel()
