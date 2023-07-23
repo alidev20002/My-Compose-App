@@ -1,4 +1,4 @@
-package com.example.composeproject.data.repositories
+package com.example.composeproject.data.repository
 
 import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.local.db.entities.toFullMovieModel
@@ -13,7 +13,7 @@ class MovieRepository(
     private val movieRemoteDataSource: MovieRemoteDataSource
 ) {
 
-    suspend fun updateMovies() {
+    suspend fun syncMovies() {
         val movies = movieRemoteDataSource.getAllMovies()
         movieLocalDataSource.insertMovies(
             movies.map {
@@ -22,7 +22,7 @@ class MovieRepository(
         )
     }
 
-    fun fetchMovies(): Flow<List<FullMovie>> {
+    fun getMovies(): Flow<List<FullMovie>> {
         return movieLocalDataSource.getAllMovies().map { movieEntities ->
             movieEntities.map { movieEntity ->
                 movieEntity.toFullMovieModel()
