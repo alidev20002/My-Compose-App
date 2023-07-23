@@ -2,6 +2,7 @@ package com.example.composeproject.data.network.api
 
 import com.example.composeproject.data.network.model.FullMovieData
 import com.example.composeproject.data.network.model.MovieData
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -16,11 +17,11 @@ interface ApiMovie {
     suspend fun getData(@Query("q") query: String) : FullMovieData
 
     @GET("movies")
-    suspend fun getAllMovies(@Query("page") page: Int, @Query("q") query: String) : FullMovieData
+    suspend fun getAllMovies(@Query("page") page: Int, @Query("q") query: String) : Response<FullMovieData>
 
 
     companion object {
-        var apiService: ApiMovie? = null
+        private var apiService: ApiMovie? = null
         fun getInstance() : ApiMovie {
             if (apiService == null) {
                 apiService = Retrofit.Builder()
