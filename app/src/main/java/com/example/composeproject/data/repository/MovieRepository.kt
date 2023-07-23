@@ -15,7 +15,7 @@ class MovieRepository(
 
     suspend fun syncMovies() {
         val movies = movieRemoteDataSource.getAllMovies()
-        movieLocalDataSource.insertMovies(
+        movieLocalDataSource.insertOrIgnoreMovies(
             movies.map {
                 it.toEntityModel()
             }
