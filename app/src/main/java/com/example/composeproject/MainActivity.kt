@@ -27,7 +27,7 @@ import com.example.composeproject.data.local.db.MovieDatabase
 import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.network.MovieRemoteDataSource
 import com.example.composeproject.data.network.api.ApiMovie
-import com.example.composeproject.data.repositories.MovieRepository
+import com.example.composeproject.data.repository.MovieRepository
 import com.example.composeproject.ui.viewmodels.MovieViewModelFactory
 import com.example.composeproject.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.MovieViewModel
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        setContent { 
+        setContent {
             val movieItems by movies.collectAsState(initial = emptyList())
             LazyColumn(modifier = Modifier) {
                 itemsIndexed(movieItems, key = {index, _ -> index}) {_, item ->

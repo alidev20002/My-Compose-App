@@ -3,16 +3,16 @@ package com.example.composeproject.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.composeproject.data.repositories.MovieRepository
+import com.example.composeproject.data.repository.MovieRepository
 import kotlinx.coroutines.launch
 
 class MovieViewModel(private val movieRepository: MovieRepository): ViewModel() {
 
-    val allMovies = movieRepository.fetchMovies()
+    val allMovies = movieRepository.getMovies()
 
     fun syncMovies() {
         viewModelScope.launch {
-            movieRepository.updateMovies()
+            movieRepository.syncMovies()
         }
     }
 }
