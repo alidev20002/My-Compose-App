@@ -18,7 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.composeproject.data.local.db.MovieDatabase
-import com.example.composeproject.data.local.db.entities.Movie
+import com.example.composeproject.data.local.db.entities.MovieEntity
 import com.example.composeproject.ui.CryptoPage
 import com.example.composeproject.ui.FullMoviePage
 import com.example.composeproject.ui.MoviePage
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
         val db = MovieDatabase.getDatabase(this)
         val movieDao = db.movieDao()
-        val movie = Movie(
+        val movie = MovieEntity(
             title = "Avengers",
             poster = "",
             year = "2021",
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
             images = emptyList()
         )
         CoroutineScope(Dispatchers.IO).launch {
-            movieDao.insertMovie(movie)
+            movieDao.insertOrIgnoreMovie(movie)
         }
 
         val movies = movieDao.getAllMovies()
