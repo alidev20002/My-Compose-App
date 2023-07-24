@@ -32,8 +32,10 @@ import com.example.composeproject.ui.viewmodels.MovieViewModelFactory
 import com.example.composeproject.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.MovieViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val tag = "alitest"
