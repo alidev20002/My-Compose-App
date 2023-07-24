@@ -25,12 +25,12 @@ data class FullMovie(
 fun FullMovie.toEntityModel(): MovieEntity {
     return MovieEntity(
         id = id,
-        title = this.title,
-        poster = this.poster,
-        year = this.year,
-        country = this.country,
-        imdbRating = this.imdb_rating,
-        genres = this.genres,
-        images = this.images
+        title = this.title ?: "",
+        poster = this.poster ?: "",
+        year = this.year ?: "",
+        country = this.country ?: "",
+        imdbRating = this.imdb_rating ?: "",
+        genres = this.genres ?: emptyList(),
+        images = this.images ?: emptyList()
     )
 }
