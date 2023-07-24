@@ -3,8 +3,6 @@ package com.example.composeproject.data.network.api
 import com.example.composeproject.data.network.model.FullMovieData
 import com.example.composeproject.data.network.model.MovieData
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
