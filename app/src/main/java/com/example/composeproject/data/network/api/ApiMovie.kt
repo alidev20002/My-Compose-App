@@ -19,18 +19,4 @@ interface ApiMovie {
     @GET("movies")
     suspend fun getAllMovies(@Query("page") page: Int, @Query("q") query: String) : Response<FullMovieData>
 
-
-    companion object {
-        private var apiService: ApiMovie? = null
-        fun getInstance() : ApiMovie {
-            if (apiService == null) {
-                apiService = Retrofit.Builder()
-                    .baseUrl("https://moviesapi.ir/api/v1/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build().create(ApiMovie::class.java)
-            }
-            return apiService!!
-        }
-    }
-
 }
