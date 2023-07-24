@@ -2,6 +2,7 @@ package com.example.composeproject.di
 
 import android.content.Context
 import com.example.composeproject.data.local.db.MovieDatabase
+import com.example.composeproject.data.local.db.daos.MovieDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,5 +20,9 @@ object DatabaseModule {
         return MovieDatabase.getDatabase(app)
     }
 
+    @Provides
+    fun provideMovieDao(database: MovieDatabase): MovieDao {
+        return database.movieDao()
+    }
 
 }
