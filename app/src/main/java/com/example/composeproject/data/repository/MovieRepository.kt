@@ -7,8 +7,9 @@ import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.network.model.toEntityModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class MovieRepository(
+class MovieRepository @Inject constructor(
     private val movieLocalDataSource: MovieLocalDataSource,
     private val movieRemoteDataSource: MovieRemoteDataSource
 ): MovieRepositoryInterface {
