@@ -4,8 +4,11 @@ import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.local.db.MovieLocalDataSourceInterface
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
 @Module
+@InstallIn(ActivityComponent::class)
 interface DataSourceModule {
 
     @Binds
