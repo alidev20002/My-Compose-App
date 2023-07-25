@@ -1,4 +1,4 @@
-package com.example.composeproject.ui
+package com.example.composeproject.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke

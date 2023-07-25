@@ -1,4 +1,4 @@
-package com.example.composeproject.ui
+package com.example.composeproject.ui.screen
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
