@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -62,12 +63,17 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.composeproject.ui.viewmodel.MovieViewModel
 import com.example.composeproject.R
 import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.network.model.FullMovieData
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -75,7 +81,7 @@ import kotlinx.coroutines.launch
 fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        val movies = movieViewModel.allMovies.collectAsState(initial = emptyList()).value
+        val movies = movieViewModel.allMovies.collectAsLazyPagingItems()
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var textfield by remember { mutableStateOf("") }
@@ -190,18 +196,20 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                         .padding(start = 10.dp, end = 10.dp, top = 30.dp),
                         columns = if (isPortrait) GridCells.Fixed(3) else GridCells.Fixed(5)
                     ) {
-                        items(movies) { movie ->
 
+                        items(
+                            movies.itemSnapshotList
+                        ) { movie ->
                             Card(elevation = 8.dp,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .padding(8.dp)) {
 
-                                GlideImage(model = movie.poster,
+                                GlideImage(model = movie?.poster,
                                     contentDescription = null,
                                     modifier = Modifier
                                         .clickable {
-                                            movieViewModel.updateMovieDetail(movie)
+                                            movieViewModel.updateMovieDetail(movie!!)
                                             navController.navigate("fullMovie")
                                         }
                                         .clip(
@@ -210,6 +218,20 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                                         .height(150.dp),
                                     contentScale = ContentScale.Crop
                                 )
+                            }
+                        }
+                        movies.apply {
+                            when {
+                                loadState.refresh is LoadState.Loading -> {
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.fillMaxSize().padding(16.dp)
+                                        )
+                                    }
+                                }
+                                loadState.refresh is LoadState.Error -> {
+                                    // Error
+                                }
                             }
                         }
                     }
