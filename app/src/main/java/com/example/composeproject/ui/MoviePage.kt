@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +42,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,16 +62,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.composeproject.ui.viewmodel.MovieViewModel
 import com.example.composeproject.R
 import com.example.composeproject.data.network.model.FullMovie
-import com.example.composeproject.data.network.model.FullMovieData
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -191,33 +185,77 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                     .padding(paddingValues)
                     .fillMaxSize()) {
 
+//                    LazyColumn {
+//                        itemsIndexed(
+//                            items = movies,
+//                        ) {_, movie ->
+//                            movie?.let {
+//                                Card(elevation = 8.dp,
+//                                    shape = RoundedCornerShape(8.dp),
+//                                    modifier = Modifier
+//                                        .padding(8.dp)) {
+//
+//                                    GlideImage(model = movie?.poster,
+//                                        contentDescription = null,
+//                                        modifier = Modifier
+//                                            .clickable {
+//                                                movieViewModel.updateMovieDetail(movie!!)
+//                                                navController.navigate("fullMovie")
+//                                            }
+//                                            .clip(
+//                                                RoundedCornerShape(8.dp)
+//                                            )
+//                                            .height(150.dp),
+//                                        contentScale = ContentScale.Crop
+//                                    )
+//                                }
+//                            }
+//                        }
+//                        movies.apply {
+//                            when {
+//                                loadState.refresh is LoadState.Loading -> {
+//                                    item {
+//                                        CircularProgressIndicator(
+//                                            modifier = Modifier
+//                                                .padding(16.dp)
+//                                        )
+//                                    }
+//                                }
+//                                loadState.refresh is LoadState.Error -> {
+//                                    // Error
+//                                }
+//                            }
+//                        }
+//                    }
+
                     LazyVerticalGrid(modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 10.dp, end = 10.dp, top = 30.dp),
                         columns = if (isPortrait) GridCells.Fixed(3) else GridCells.Fixed(5)
                     ) {
-
                         items(
-                            movies.itemSnapshotList
-                        ) { movie ->
-                            Card(elevation = 8.dp,
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier
-                                    .padding(8.dp)) {
-
-                                GlideImage(model = movie?.poster,
-                                    contentDescription = null,
+                            movies.itemCount,
+                        ) { index ->
+                            movies[index]?.let {
+                                Card(elevation = 8.dp,
+                                    shape = RoundedCornerShape(8.dp),
                                     modifier = Modifier
-                                        .clickable {
-                                            movieViewModel.updateMovieDetail(movie!!)
-                                            navController.navigate("fullMovie")
-                                        }
-                                        .clip(
-                                            RoundedCornerShape(8.dp)
-                                        )
-                                        .height(150.dp),
-                                    contentScale = ContentScale.Crop
-                                )
+                                        .padding(8.dp)) {
+
+                                    GlideImage(model = it.poster,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .clickable {
+                                                movieViewModel.updateMovieDetail(it)
+                                                navController.navigate("fullMovie")
+                                            }
+                                            .clip(
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                            .height(150.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
                         }
                         movies.apply {
@@ -225,7 +263,8 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                                 loadState.refresh is LoadState.Loading -> {
                                     item {
                                         CircularProgressIndicator(
-                                            modifier = Modifier.fillMaxSize().padding(16.dp)
+                                            modifier = Modifier
+                                                .padding(16.dp)
                                         )
                                     }
                                 }

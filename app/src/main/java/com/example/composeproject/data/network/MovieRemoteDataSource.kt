@@ -9,9 +9,9 @@ class MovieRemoteDataSource @Inject constructor(
     private val apiMovie: ApiMovie
 ): MovieRemoteDataSourceInterface {
 
-    override suspend fun getAllMovies(): List<FullMovie> {
+    override suspend fun getAllMovies(page: Int): List<FullMovie> {
         try {
-            val response = apiMovie.getAllMovies(0, "")
+            val response = apiMovie.getAllMovies(page, "")
             Log.i("alitest", "getAllMovies: $response")
             return response.body()?.data ?: emptyList()
         }catch (e: Exception) {

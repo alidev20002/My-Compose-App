@@ -18,12 +18,6 @@ class MovieViewModel @Inject constructor(
     val movieDetail: FullMovie?
         get() = _movieDetail
 
-    fun syncMovies() {
-        viewModelScope.launch {
-            movieRepository.syncMovies()
-        }
-    }
-
     fun updateMovieDetail(movie: FullMovie) {
         _movieDetail = movie
     }

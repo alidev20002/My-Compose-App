@@ -75,8 +75,6 @@ class MainActivity : ComponentActivity() {
                                 navController,
                                 onChangeTheme = {isLightTheme = !isLightTheme}
                             )
-
-                            movieViewModel.syncMovies()
                         }
                         composable("fullMovie") {
                             FullMoviePage(movieViewModel.movieDetail!!,
