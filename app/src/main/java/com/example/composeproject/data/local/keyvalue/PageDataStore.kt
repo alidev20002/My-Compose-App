@@ -1,5 +1,6 @@
 package com.example.composeproject.data.local.keyvalue
 
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -8,21 +9,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PageDataStore(
-    private val dataStore: DataStore<Preferences>
+    private val context: Context
 ) {
 
-    companion object {
-        private val PAGE_NUMBER_KEY = intPreferencesKey("page_number")
+    private val baseKeyValue = KeyValueBase(context, FILE_NAME)
+
+    fun readPageNumber(key: String): Flow<Int?> {
+        return baseKeyValue.readInt(key)
     }
 
-    val pageNumber: Flow<Int?>
-        get() = dataStore.data.map { preferences ->
-            preferences[PAGE_NUMBER_KEY] ?: 1
-        }
+    suspend fun writePageNumber(key: String, value: Int) {
+        baseKeyValue.writeInt(key, value)
+    }
 
-    suspend fun savePage(page: Int) {
-        dataStore.edit { preferences ->
-            preferences[PAGE_NUMBER_KEY] = page
-        }
+    companion object {
+        private const val FILE_NAME = "movie"
     }
 }
