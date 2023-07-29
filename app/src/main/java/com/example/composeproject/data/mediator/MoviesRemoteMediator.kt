@@ -7,18 +7,24 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.local.db.entities.MovieEntity
+import com.example.composeproject.data.local.keyvalue.PageDataStore
 import com.example.composeproject.data.network.MovieRemoteDataSource
 import com.example.composeproject.data.network.model.toEntityModel
+import kotlinx.coroutines.flow.firstOrNull
 
 @OptIn(ExperimentalPagingApi::class)
 class MoviesRemoteMediator(
     private val movieLocalDataSource: MovieLocalDataSource,
     private val movieRemoteDataSource: MovieRemoteDataSource,
+    private val pageDataStore: PageDataStore,
     private var page: Int = 1
-): RemoteMediator<Int, MovieEntity>() {
+) : RemoteMediator<Int, MovieEntity>() {
 
     override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH
+        page = pageDataStore.readPageNumber().firstOrNull()
+            ?: return InitializeAction.LAUNCH_INITIAL_REFRESH
+
+        return InitializeAction.SKIP_INITIAL_REFRESH
     }
 
     @ExperimentalPagingApi
@@ -28,13 +34,15 @@ class MoviesRemoteMediator(
     ): MediatorResult {
 
         return try {
-            when(loadType) {
+            when (loadType) {
                 LoadType.REFRESH -> {
                     page = 1
                 }
+
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(true)
                 }
+
                 LoadType.APPEND -> {
                     page += 1
                     Log.i("alitest", "load: $page")
@@ -51,7 +59,7 @@ class MoviesRemoteMediator(
             MediatorResult.Success(
                 endOfPaginationReached = movies.isEmpty()
             )
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.i("alitest", "load: $e")
             return MediatorResult.Error(e)
         }
