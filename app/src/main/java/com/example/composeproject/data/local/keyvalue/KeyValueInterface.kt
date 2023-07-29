@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface KeyValueInterface {
 
-    fun readInt(key: String): Flow<Int>
+    fun readInt(key: String): Flow<Int?>
 
     suspend fun writeInt(key: String, value: Int)
 }
