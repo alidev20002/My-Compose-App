@@ -1,12 +1,7 @@
 package com.example.composeproject.data.local.keyvalue
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class PageDataStore(
     private val context: Context
