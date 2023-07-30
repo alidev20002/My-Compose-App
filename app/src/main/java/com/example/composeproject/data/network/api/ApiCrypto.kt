@@ -11,14 +11,20 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 class ApiCrypto {
 
     private val httpClient = HttpClient(OkHttp) {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                ignoreUnknownKeys = true
+            })
         }
     }
+
+    private val srcList: String =
+        "btc,eth,ltc,usdt,xrp,bch,bnb,eos,xlm,etc,trx,doge,uni,dai,link,dot,aave,ada,shib"
 
     suspend fun getPrices(): CryptoStatsModel {
         return httpClient.get {
@@ -26,6 +32,8 @@ class ApiCrypto {
                 protocol = URLProtocol.HTTPS
                 host = "api.nobitex.ir"
                 path("/market/stats")
+                parameters.append("srcCurrency", srcList)
+                parameters.append("dstCurrency", "rls")
             }
             contentType(ContentType.Application.Json)
         }.body()
