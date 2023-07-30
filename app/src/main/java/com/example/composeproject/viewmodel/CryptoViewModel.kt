@@ -8,16 +8,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composeproject.data.network.api.ApiCrypto
 import com.example.composeproject.data.network.model.CryptoStatsModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CryptoViewModel: ViewModel() {
+@HiltViewModel
+class CryptoViewModel @Inject constructor(
+    private val apiService: ApiCrypto
+) : ViewModel() {
 
     var cryptoStats by mutableStateOf(CryptoStatsModel("", emptyMap()))
     private var errorMessage: String by mutableStateOf("")
     private var isStart: Boolean by mutableStateOf(false)
-
-    private val apiService = ApiCrypto()
 
     fun getCryptoStats() {
         if (!isStart) {

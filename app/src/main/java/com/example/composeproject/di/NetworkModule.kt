@@ -1,5 +1,6 @@
 package com.example.composeproject.di
 
+import com.example.composeproject.data.network.api.ApiCrypto
 import com.example.composeproject.data.network.api.ApiMovie
 import dagger.Module
 import dagger.Provides
@@ -20,5 +21,11 @@ object NetworkModule {
                 .baseUrl("https://moviesapi.ir/api/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(ApiMovie::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiCrypto(): ApiCrypto {
+        return ApiCrypto()
     }
 }

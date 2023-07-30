@@ -13,8 +13,9 @@ import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class ApiCrypto {
+class ApiCrypto @Inject constructor() {
 
     private val httpClient = HttpClient(OkHttp) {
 

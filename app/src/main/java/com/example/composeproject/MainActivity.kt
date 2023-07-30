@@ -1,7 +1,6 @@
 package com.example.composeproject
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -21,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.local.db.entities.MovieEntity
-import com.example.composeproject.data.network.api.ApiCrypto
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
@@ -35,9 +33,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
-    private val apiClient = ApiCrypto()
 
     @Inject
     lateinit var movieDao: MovieDao
@@ -52,17 +48,13 @@ class MainActivity : ComponentActivity() {
                     MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
                 )
             }
-
-            val status = apiClient.getPrices().status
-            val stats = apiClient.getPrices().stats
-            Log.i("alitest", "Status: $status")
-            Log.i("alitest", "stats: $stats")
         }
 
         // #########################################
 
         setContent {
             val movieViewModel = viewModel<com.example.composeproject.ui.viewmodel.MovieViewModel>()
+            val cryptoViewModel = viewModel<CryptoViewModel>()
             var isLightTheme by rememberSaveable { mutableStateOf(true) }
             val navController = rememberNavController()
 
