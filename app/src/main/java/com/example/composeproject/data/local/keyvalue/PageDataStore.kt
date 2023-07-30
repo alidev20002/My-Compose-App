@@ -1,10 +1,12 @@
 package com.example.composeproject.data.local.keyvalue
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PageDataStore(
-    private val context: Context
+class PageDataStore @Inject constructor(
+    @ApplicationContext private val context: Context
 ): PageDataStoreInterface {
 
     private val baseKeyValue = KeyValueBase(context, FILE_NAME)
