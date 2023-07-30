@@ -44,13 +44,19 @@ class MoviesRemoteMediator(
                 }
 
                 LoadType.APPEND -> {
-                    page += 1
-                    Log.i("alitest", "load: $page")
+                    page = pageDataStore.readPageNumber().firstOrNull()
+                        ?: return MediatorResult.Success(true)
+                    Log.i("alitest", "append block: $page")
                 }
             }
             val movies = movieRemoteDataSource.getAllMovies(
                 page = page
             )
+
+            Log.i("alitest", "after block: $movies")
+
+            pageDataStore.writePageNumber(++page)
+
             movieLocalDataSource.insertOrIgnoreMovies(
                 movies.map {
                     it.toEntityModel()
