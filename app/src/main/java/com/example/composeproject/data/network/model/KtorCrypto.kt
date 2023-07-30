@@ -13,5 +13,6 @@ data class CryptoModel(
 
 @Serializable
 data class CryptoStatsModel(
+    val status: String,
     val stats: Map<String, CryptoModel>
 )
