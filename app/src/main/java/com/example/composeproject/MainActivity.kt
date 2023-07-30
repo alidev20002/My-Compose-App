@@ -1,6 +1,7 @@
 package com.example.composeproject
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -20,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.local.db.entities.MovieEntity
+import com.example.composeproject.data.network.api.ApiCrypto
+import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
 import com.example.composeproject.ui.theme.ComposeProjectTheme
@@ -34,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
     private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
+    private val apiClient = ApiCrypto()
 
     @Inject
     lateinit var movieDao: MovieDao
@@ -48,6 +52,11 @@ class MainActivity : ComponentActivity() {
                     MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
                 )
             }
+
+            val status = apiClient.getPrices().status
+            val stats = apiClient.getPrices().stats
+            Log.i("alitest", "Status: $status")
+            Log.i("alitest", "stats: $stats")
         }
 
         // #########################################
@@ -86,10 +95,10 @@ class MainActivity : ComponentActivity() {
                                 isLightTheme = !isLightTheme
                             }
                         }
-//                        composable("crypto") {
-//                            CryptoPage(cryptoViewModel.cryptoStats)
-//                            cryptoViewModel.getCryptoStats()
-//                        }
+                        composable("crypto") {
+                            CryptoPage(cryptoViewModel.cryptoStats)
+                        }
+                        cryptoViewModel.getCryptoStats()
 //                        composable("task") {
 //                            TaskList(taskViewModel)
 //                        }

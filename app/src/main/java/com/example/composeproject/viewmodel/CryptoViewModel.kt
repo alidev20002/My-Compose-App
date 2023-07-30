@@ -6,26 +6,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.composeproject.api.ApiCrypto
-import com.example.composeproject.data.network.model.CryptoStats
+import com.example.composeproject.data.network.api.ApiCrypto
+import com.example.composeproject.data.network.model.CryptoStatsModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class CryptoViewModel: ViewModel() {
 
-    var cryptoStats by mutableStateOf(CryptoStats(emptyMap()))
+    var cryptoStats by mutableStateOf(CryptoStatsModel("", emptyMap()))
     private var errorMessage: String by mutableStateOf("")
-    private val srcList: String = "btc,eth,ltc,usdt,xrp,bch,bnb,eos,xlm,etc,trx,doge,uni,dai,link,dot,aave,ada,shib"
     private var isStart: Boolean by mutableStateOf(false)
+
+    private val apiService = ApiCrypto()
 
     fun getCryptoStats() {
         if (!isStart) {
             isStart = true
             viewModelScope.launch {
                 while (true) {
-                    val apiService = ApiCrypto.getInstance()
                     try {
-                        val crypto = apiService.getData(srcList)
+                        val crypto = apiService.getPrices()
                         cryptoStats = crypto
                     }
                     catch (e: Exception) {
@@ -36,6 +36,5 @@ class CryptoViewModel: ViewModel() {
                 }
             }
         }
-
     }
 }

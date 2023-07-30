@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.example.composeproject.R
 import com.example.composeproject.data.network.model.CryptoRandom
-import com.example.composeproject.data.network.model.CryptoStats
+import com.example.composeproject.data.network.model.CryptoStatsModel
 
 @Composable
-fun CryptoPage(cryptoStats: CryptoStats) {
+fun CryptoPage(cryptoStats: CryptoStatsModel) {
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
@@ -62,7 +62,7 @@ fun CryptoPage(cryptoStats: CryptoStats) {
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            val cryptos = cryptoStats.data.entries.toMutableList()
+            val cryptos = cryptoStats.stats.entries.toMutableList()
 
             items(cryptos) { item ->
 
