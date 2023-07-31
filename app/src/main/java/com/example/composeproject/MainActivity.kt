@@ -19,7 +19,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.composeproject.data.local.db.daos.MovieDao
-import com.example.composeproject.data.local.db.entities.MovieEntity
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
@@ -43,11 +42,6 @@ class MainActivity : ComponentActivity() {
 
         // this is test area and will be removed soon
         lifecycleScope.launch {
-//            for (i in 1..100) {
-//                movieDao.insertOrIgnoreMovie(
-//                    MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
-//                )
-//            }
         }
 
         // #########################################
