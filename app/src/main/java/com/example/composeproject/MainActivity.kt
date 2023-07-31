@@ -43,11 +43,11 @@ class MainActivity : ComponentActivity() {
 
         // this is test area and will be removed soon
         lifecycleScope.launch {
-            for (i in 1..100) {
-                movieDao.insertOrIgnoreMovie(
-                    MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
-                )
-            }
+//            for (i in 1..100) {
+//                movieDao.insertOrIgnoreMovie(
+//                    MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
+//                )
+//            }
         }
 
         // #########################################
