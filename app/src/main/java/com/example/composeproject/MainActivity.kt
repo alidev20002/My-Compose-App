@@ -26,12 +26,11 @@ import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
 import com.example.composeproject.ui.theme.ComposeProjectTheme
-import com.example.composeproject.viewmodel.CryptoViewModel
+import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

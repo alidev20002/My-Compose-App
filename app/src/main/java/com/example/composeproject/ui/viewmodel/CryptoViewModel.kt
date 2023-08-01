@@ -1,4 +1,4 @@
-package com.example.composeproject.viewmodel
+package com.example.composeproject.ui.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
