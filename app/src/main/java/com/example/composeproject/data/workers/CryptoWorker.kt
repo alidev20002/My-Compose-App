@@ -7,6 +7,10 @@ import androidx.work.WorkerParameters
 class CryptoWorker(ctx: Context, params: WorkerParameters): Worker(ctx, params) {
 
     override fun doWork(): Result {
-        TODO("Not yet implemented")
+        return try {
+            Result.success()
+        }catch (e: Exception) {
+            Result.failure()
+        }
     }
 }
