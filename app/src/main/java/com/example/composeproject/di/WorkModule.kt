@@ -5,6 +5,7 @@ import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,7 +16,7 @@ object WorkModule {
     @Singleton
     @Provides
     fun provideWorkManager(
-        context: Context
+        @ApplicationContext context: Context
     ): WorkManager {
         return WorkManager.getInstance(context)
     }
