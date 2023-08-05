@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -21,16 +22,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.composeproject.R
 import com.example.composeproject.data.network.model.CryptoRandom
 import com.example.composeproject.data.network.model.CryptoStatsModel
+import com.example.composeproject.data.workers.CryptoWorker
 
 @Composable
 fun CryptoPage(cryptoStats: CryptoStatsModel) {
+
+    val context = LocalContext.current
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
@@ -55,6 +63,20 @@ fun CryptoPage(cryptoStats: CryptoStatsModel) {
                                 color = Color.White)
                         }
                     }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            item {
+                Button(onClick = {
+                    val workRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
+                        .build()
+                    WorkManager.getInstance(context).enqueue(workRequest)
+                }) {
+                    Text(text = "Start Crypto Worker")
                 }
             }
 
@@ -109,4 +131,10 @@ private fun getRandomCrypto(): List<CryptoRandom> {
         CryptoRandom(R.drawable.shib, "SHIB"),
         CryptoRandom(R.drawable.ada, "ADA"),
     )
+}
+
+@Preview
+@Composable
+fun CryptoPagePreview() {
+    CryptoPage(cryptoStats = CryptoStatsModel("", emptyMap()))
 }

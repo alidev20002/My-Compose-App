@@ -47,20 +47,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // this is test area and will be removed soon
-        val ktorTest = KtorTest()
-        var token = Token("", "")
-        lifecycleScope.launch {
-            token = ktorTest.login("09999999999", "12345")
-            Log.i("alitest", "onCreate: $token")
-            val data = ktorTest.getData(token)
-            Log.i("alitest", "onCreate: $data")
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(12000)
-            val data = ktorTest.getData(token)
-            Log.i("alitest", "onCreate: $data")
-        }
+//        val ktorTest = KtorTest()
+//        var token = Token("", "")
+//        lifecycleScope.launch {
+//            token = ktorTest.login("09999999999", "12345")
+//            Log.i("alitest", "onCreate: $token")
+//            val data = ktorTest.getData(token)
+//            Log.i("alitest", "onCreate: $data")
+//        }
+//
+//        CoroutineScope(Dispatchers.IO).launch {
+//            delay(12000)
+//            val data = ktorTest.getData(token)
+//            Log.i("alitest", "onCreate: $data")
+//        }
 
         // #########################################
 
