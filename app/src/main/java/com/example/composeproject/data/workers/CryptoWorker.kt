@@ -28,6 +28,8 @@ class CryptoWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx,
             val outPutData = Data.Builder()
                 .put("crypto", jsonData)
                 .build()
+            Log.i("alitest", "doWork: $outPutData")
+            makeStatusNotification("Data is ready!\n$outPutData", applicationContext)
             Result.success(outPutData)
         }catch (e: Exception) {
             Log.i("alitest", "doWork: ${e.printStackTrace()}")
@@ -53,7 +55,7 @@ class CryptoWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx,
             .setContentTitle("Work Request")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVibrate(longArrayOf())
+            .setVibrate(longArrayOf(1000, 1000))
 
         NotificationManagerCompat.from(context).notify(1, builder.build())
     }
