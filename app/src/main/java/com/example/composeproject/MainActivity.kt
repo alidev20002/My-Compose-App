@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
@@ -87,7 +88,11 @@ class MainActivity : ComponentActivity() {
             .setConstraints(constraints)
             .build()
 
-        workManager.enqueue(movieWorkRequest)
+        workManager.enqueueUniquePeriodicWork(
+            "movieApi",
+            ExistingPeriodicWorkPolicy.KEEP,
+            movieWorkRequest
+        )
 
 
         // #########################################
