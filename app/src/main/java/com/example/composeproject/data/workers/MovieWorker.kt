@@ -21,7 +21,6 @@ class MovieWorker @AssistedInject constructor(
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
-        makeStatusNotification("start periodic movie worker...", applicationContext)
         return try {
             val movies = movieRemoteDataSource.getAllMovies(page = 1)
             movieLocalDataSource.insertOrIgnoreMovies(
@@ -30,6 +29,7 @@ class MovieWorker @AssistedInject constructor(
                 }
             )
             makeStatusNotification("Database Updated Successfully!", applicationContext)
+            Log.i("alitest", "doWork: Database Updated Successfully!")
             Result.success()
         } catch (e: Exception) {
             Log.i("alitest", "doWork: ${e.printStackTrace()}")
