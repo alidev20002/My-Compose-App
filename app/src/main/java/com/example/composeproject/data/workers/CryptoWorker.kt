@@ -37,7 +37,7 @@ class CryptoWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         }
     }
 
-    private fun makeStatusNotification(message: String, context: Context) {
+    fun makeStatusNotification(message: String, context: Context) {
         val channelId = "VERBOSE_NOTIFICATION"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
