@@ -21,17 +21,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.network.api.KtorTest
-import com.example.composeproject.data.network.api.Token
+import com.example.composeproject.data.network.api.RefreshAccessToken
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
 import com.example.composeproject.ui.theme.ComposeProjectTheme
-import com.example.composeproject.viewmodel.CryptoViewModel
+import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,17 +48,17 @@ class MainActivity : ComponentActivity() {
 
         // this is test area and will be removed soon
         val ktorTest = KtorTest()
-        var token = Token("", "")
+        var token: RefreshAccessToken
         lifecycleScope.launch {
             token = ktorTest.login("09999999999", "12345")
             Log.i("alitest", "onCreate: $token")
-            val data = ktorTest.getData(token)
+            val data = ktorTest.getData()
             Log.i("alitest", "onCreate: $data")
         }
 
         CoroutineScope(Dispatchers.IO).launch {
             delay(12000)
-            val data = ktorTest.getData(token)
+            val data = ktorTest.getData()
             Log.i("alitest", "onCreate: $data")
         }
 
