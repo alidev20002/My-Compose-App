@@ -19,9 +19,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.network.api.KtorTest
 import com.example.composeproject.data.network.api.Token
+import com.example.composeproject.data.workers.CryptoWorker
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
@@ -61,6 +66,19 @@ class MainActivity : ComponentActivity() {
 //            val data = ktorTest.getData(token)
 //            Log.i("alitest", "onCreate: $data")
 //        }
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        val workManager = WorkManager.getInstance(this)
+
+        workManager.enqueue(workRequest)
+
 
         // #########################################
 
