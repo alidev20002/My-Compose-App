@@ -21,7 +21,7 @@ class MovieWorker @AssistedInject constructor(
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
-        makeStatusNotification("Get data from api...", applicationContext)
+        makeStatusNotification("start periodic movie worker...", applicationContext)
         return try {
             val movies = movieRemoteDataSource.getAllMovies(page = 1)
             movieLocalDataSource.insertOrIgnoreMovies(
