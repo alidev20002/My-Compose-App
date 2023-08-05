@@ -22,11 +22,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.network.api.KtorTest
 import com.example.composeproject.data.network.api.Token
 import com.example.composeproject.data.workers.CryptoWorker
+import com.example.composeproject.data.workers.MovieWorker
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
@@ -38,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,6 +50,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var movieDao: MovieDao
+
+    @Inject
+    lateinit var workManager: WorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +81,13 @@ class MainActivity : ComponentActivity() {
             .setConstraints(constraints)
             .build()
 
-        val workManager = WorkManager.getInstance(this)
-
         workManager.enqueue(workRequest)
+
+        val movieWorkRequest = PeriodicWorkRequestBuilder<MovieWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+
+        workManager.enqueue(movieWorkRequest)
 
 
         // #########################################
