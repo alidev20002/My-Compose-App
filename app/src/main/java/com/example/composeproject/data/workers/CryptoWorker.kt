@@ -16,7 +16,7 @@ import com.example.composeproject.data.network.api.ApiCrypto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class CryptoWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx, params) {
+class CryptoWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
 
     @SuppressLint("RestrictedApi")
     override suspend fun doWork(): Result {
@@ -31,7 +31,7 @@ class CryptoWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx,
             Log.i("alitest", "doWork: $outPutData")
             makeStatusNotification("Data is ready!\n$outPutData", applicationContext)
             Result.success(outPutData)
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.i("alitest", "doWork: ${e.printStackTrace()}")
             Result.failure()
         }
@@ -46,7 +46,8 @@ class CryptoWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx,
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelId, name, importance)
             channel.description = description
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
             notificationManager?.createNotificationChannel(channel)
         }
 
