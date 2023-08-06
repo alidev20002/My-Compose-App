@@ -1,7 +1,7 @@
 package com.example.composeproject
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,14 +20,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.composeproject.data.local.db.daos.MovieDao
-import com.example.composeproject.data.network.api.KtorTest
-import com.example.composeproject.data.network.api.Token
 import com.example.composeproject.data.workers.CryptoWorker
+import com.example.composeproject.data.workers.LogWorker
 import com.example.composeproject.data.workers.MovieWorker
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
@@ -37,10 +36,6 @@ import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -55,6 +50,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var workManager: WorkManager
 
+    @SuppressLint("EnqueueWork")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,11 +74,20 @@ class MainActivity : ComponentActivity() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val workRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
+        val cryptoWorkRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
             .setConstraints(constraints)
             .build()
 
-        workManager.enqueue(workRequest)
+        val logWorkRequest = OneTimeWorkRequestBuilder<LogWorker>()
+            .build()
+
+        workManager.beginWith(cryptoWorkRequest)
+            .then(logWorkRequest)
+            .enqueue()
+
+        workManager.beginUniqueWork("crypto", ExistingWorkPolicy.KEEP, cryptoWorkRequest)
+            .then(logWorkRequest)
+            .enqueue()
 
         val movieWorkRequest = PeriodicWorkRequestBuilder<MovieWorker>(15, TimeUnit.MINUTES)
             .setConstraints(constraints)
@@ -103,15 +108,19 @@ class MainActivity : ComponentActivity() {
             var isLightTheme by rememberSaveable { mutableStateOf(true) }
             val navController = rememberNavController()
 
-            ComposeProjectTheme (darkTheme = !isLightTheme) {
+            ComposeProjectTheme(darkTheme = !isLightTheme) {
 
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
 
                     val movies = movieViewModel.allMovies.collectAsLazyPagingItems()
 
-                    NavHost(navController = navController,
-                        startDestination = "movie") {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "movie"
+                    ) {
 
 //                        composable("splash") {
 //                            SplashScreen(navController)
@@ -122,13 +131,15 @@ class MainActivity : ComponentActivity() {
                                 movies,
                                 isLightTheme,
                                 navController,
-                                onChangeTheme = {isLightTheme = !isLightTheme}
+                                onChangeTheme = { isLightTheme = !isLightTheme }
                             )
                         }
                         composable("fullMovie") {
-                            FullMoviePage(movieViewModel.movieDetail!!,
+                            FullMoviePage(
+                                movieViewModel.movieDetail!!,
                                 isLightTheme,
-                                navController) {
+                                navController
+                            ) {
                                 isLightTheme = !isLightTheme
                             }
                         }
