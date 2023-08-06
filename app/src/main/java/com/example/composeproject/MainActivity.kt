@@ -59,21 +59,19 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val cryptoWorkRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
+            .addTag("crypto")
             .setConstraints(constraints)
             .build()
 
         val logWorkRequest = OneTimeWorkRequestBuilder<LogWorker>()
             .build()
 
-        workManager.beginWith(cryptoWorkRequest)
-            .then(logWorkRequest)
-            .enqueue()
-
         workManager.beginUniqueWork("crypto", ExistingWorkPolicy.KEEP, cryptoWorkRequest)
             .then(logWorkRequest)
             .enqueue()
 
         val movieWorkRequest = PeriodicWorkRequestBuilder<MovieWorker>(15, TimeUnit.MINUTES)
+            .addTag("movieApi")
             .setConstraints(constraints)
             .build()
 
