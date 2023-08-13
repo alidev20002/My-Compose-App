@@ -14,6 +14,10 @@ class MovieLocalDataSource @Inject constructor(
         return movieDao.getAllMovies()
     }
 
+    override fun searchMovie(query: String): PagingSource<Int, MovieEntity> {
+        return movieDao.searchMovie(query)
+    }
+
     override suspend fun insertOrIgnoreMovies(movies: List<MovieEntity>) {
         movieDao.insertOrIgnoreMovies(movies)
     }

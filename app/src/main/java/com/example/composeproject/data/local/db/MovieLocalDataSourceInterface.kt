@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieLocalDataSourceInterface {
     fun getAllMovies(): PagingSource<Int, MovieEntity>
+    fun searchMovie(query: String): PagingSource<Int, MovieEntity>
     suspend fun insertOrIgnoreMovies(movies: List<MovieEntity>)
 }
