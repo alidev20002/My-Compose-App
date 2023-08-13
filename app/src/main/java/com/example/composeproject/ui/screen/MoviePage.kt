@@ -1,6 +1,7 @@
 package com.example.composeproject.ui.screen
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -209,30 +210,34 @@ fun MoviePage(
                         columns = GridCells.Fixed(3),
                         state = scrollState
                     ) {
+                        val moviesList = movies.itemSnapshotList.items.filter {
+                            it.poster.endsWith(".jpg")
+                        }
                         items(
-                            movies.itemCount,
+                            moviesList.size,
                         ) { index ->
                             movies[index]?.let {
-                                Card(
-                                    elevation = 8.dp,
-                                    shape = RoundedCornerShape(8.dp),
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                ) {
-
-                                    GlideImage(model = it.poster,
-                                        contentDescription = null,
+                                if (it.poster.endsWith(".jpg")) {
+                                    Card(
+                                        elevation = 8.dp,
+                                        shape = RoundedCornerShape(8.dp),
                                         modifier = Modifier
-                                            .clickable {
-                                                movieViewModel.updateMovieDetail(it)
-                                                navController.navigate("fullMovie")
-                                            }
-                                            .clip(
-                                                RoundedCornerShape(8.dp)
-                                            )
-                                            .height(150.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                            .padding(8.dp)
+                                    ) {
+                                        GlideImage(model = it.poster,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .clickable {
+                                                    movieViewModel.updateMovieDetail(it)
+                                                    navController.navigate("fullMovie")
+                                                }
+                                                .clip(
+                                                    RoundedCornerShape(8.dp)
+                                                )
+                                                .height(150.dp),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
                                 }
                             }
                         }
