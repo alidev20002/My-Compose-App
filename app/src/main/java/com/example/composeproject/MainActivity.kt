@@ -32,6 +32,8 @@ import com.example.composeproject.data.workers.MovieWorker
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
+import com.example.composeproject.ui.screen.SplashScreen
+import com.example.composeproject.ui.screen.TaskList
 import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
@@ -103,9 +105,9 @@ class MainActivity : ComponentActivity() {
                         startDestination = "movie"
                     ) {
 
-//                        composable("splash") {
-//                            SplashScreen(navController)
-//                        }
+                        composable("splash") {
+                            SplashScreen(navController)
+                        }
                         composable("movie") {
                             MoviePage(
                                 movieViewModel,
@@ -128,9 +130,9 @@ class MainActivity : ComponentActivity() {
                             CryptoPage(cryptoViewModel.cryptoStats)
                         }
                         cryptoViewModel.getCryptoStats()
-//                        composable("task") {
-//                            TaskList(taskViewModel)
-//                        }
+                        composable("task") {
+                            TaskList(taskViewModel)
+                        }
                     }
                 }
             }
