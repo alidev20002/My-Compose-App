@@ -6,6 +6,8 @@ import androidx.paging.PagingData
 import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,8 +25,10 @@ class MovieViewModel @Inject constructor(
     val movieDetail: FullMovie?
         get() = _movieDetail
 
+    var job: Job? = null
+
     init {
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             movieRepository.getMovies("").collect {
                 _allMovies.emit(it)
             }
@@ -36,7 +40,8 @@ class MovieViewModel @Inject constructor(
     }
 
     fun searchMovie(query: String) {
-        viewModelScope.launch {
+        job?.cancel()
+        job = viewModelScope.launch {
             movieRepository.getMovies(query).collect {
                 _allMovies.emit(it)
             }
