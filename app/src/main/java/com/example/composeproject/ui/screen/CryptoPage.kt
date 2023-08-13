@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.example.composeproject.R
@@ -109,4 +110,10 @@ private fun getRandomCrypto(): List<CryptoRandom> {
         CryptoRandom(R.drawable.shib, "SHIB"),
         CryptoRandom(R.drawable.ada, "ADA"),
     )
+}
+
+@Preview
+@Composable
+fun CryptoPagePreview() {
+    CryptoPage(cryptoStats = CryptoStatsModel("", emptyMap()))
 }

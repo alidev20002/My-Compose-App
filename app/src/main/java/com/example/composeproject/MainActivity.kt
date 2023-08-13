@@ -1,7 +1,7 @@
 package com.example.composeproject
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,15 +13,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.composeproject.data.local.db.daos.MovieDao
-import com.example.composeproject.data.network.api.KtorTest
-import com.example.composeproject.data.network.api.RefreshAccessToken
+import com.example.composeproject.data.workers.CryptoWorker
+import com.example.composeproject.data.workers.LogWorker
+import com.example.composeproject.data.workers.MovieWorker
 import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
@@ -29,10 +36,7 @@ import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,24 +47,39 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var movieDao: MovieDao
 
+    @Inject
+    lateinit var workManager: WorkManager
+
+    @SuppressLint("EnqueueWork")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // this is test area and will be removed soon
-        val ktorTest = KtorTest()
-        var token: RefreshAccessToken
-        lifecycleScope.launch {
-            token = ktorTest.login("09999999999", "12345")
-            Log.i("alitest", "onCreate: $token")
-            val data = ktorTest.getData()
-            Log.i("alitest", "onCreate: $data")
-        }
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(12000)
-            val data = ktorTest.getData()
-            Log.i("alitest", "onCreate: $data")
-        }
+        val cryptoWorkRequest = OneTimeWorkRequestBuilder<CryptoWorker>()
+            .addTag("crypto")
+            .setConstraints(constraints)
+            .build()
+
+        val logWorkRequest = OneTimeWorkRequestBuilder<LogWorker>()
+            .build()
+
+        workManager.beginUniqueWork("crypto", ExistingWorkPolicy.KEEP, cryptoWorkRequest)
+            .then(logWorkRequest)
+            .enqueue()
+
+        val movieWorkRequest = PeriodicWorkRequestBuilder<MovieWorker>(15, TimeUnit.MINUTES)
+            .addTag("movieApi")
+            .setConstraints(constraints)
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            "movieApi",
+            ExistingPeriodicWorkPolicy.KEEP,
+            movieWorkRequest
+        )
 
         // #########################################
 
@@ -70,15 +89,19 @@ class MainActivity : ComponentActivity() {
             var isLightTheme by rememberSaveable { mutableStateOf(true) }
             val navController = rememberNavController()
 
-            ComposeProjectTheme (darkTheme = !isLightTheme) {
+            ComposeProjectTheme(darkTheme = !isLightTheme) {
 
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
 
                     val movies = movieViewModel.allMovies.collectAsLazyPagingItems()
 
-                    NavHost(navController = navController,
-                        startDestination = "movie") {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "movie"
+                    ) {
 
 //                        composable("splash") {
 //                            SplashScreen(navController)
@@ -89,13 +112,15 @@ class MainActivity : ComponentActivity() {
                                 movies,
                                 isLightTheme,
                                 navController,
-                                onChangeTheme = {isLightTheme = !isLightTheme}
+                                onChangeTheme = { isLightTheme = !isLightTheme }
                             )
                         }
                         composable("fullMovie") {
-                            FullMoviePage(movieViewModel.movieDetail!!,
+                            FullMoviePage(
+                                movieViewModel.movieDetail!!,
                                 isLightTheme,
-                                navController) {
+                                navController
+                            ) {
                                 isLightTheme = !isLightTheme
                             }
                         }
@@ -112,63 +137,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-/*
-@Preview(widthDp = 360, heightDp = 640)
-@Composable
-fun DefaultPreview() {
-    var isLightTheme by remember {
-        mutableStateOf(true)
-    }
-    val navController = rememberNavController()
-    ComposeProjectTheme (darkTheme = !isLightTheme) {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            NavHost(navController = navController, startDestination = "home") {
-                composable("splash") {
-                    SplashScreen(navController)
-                }
-                composable("movie") {
-//                    MoviePage(MovieData(emptyList()), isLightTheme) {
-//                        isLightTheme = !isLightTheme
-//                    }
-                }
-                composable("crypto") {
-                    CryptoPage()
-                }
-            }
-        }
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 640, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun DefaultPreviewDark() {
-    var isLightTheme by remember {
-        mutableStateOf(false)
-    }
-    val navController = rememberNavController()
-    ComposeProjectTheme (darkTheme = !isLightTheme) {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            NavHost(navController = navController, startDestination = "home") {
-                composable("splash") {
-                    SplashScreen(navController)
-                }
-                composable("movie") {
-//                    MoviePage(MovieData(emptyList()), isLightTheme) {
-//                        isLightTheme = !isLightTheme
-//                    }
-                }
-                composable("crypto") {
-                    CryptoPage()
-                }
-            }
-        }
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 640)
-@Composable
-fun PartPreview() {
-}**/
