@@ -10,7 +10,6 @@ import com.example.composeproject.data.network.MovieRemoteDataSource
 import com.example.composeproject.data.network.model.toEntityModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 @HiltWorker
 class MovieWorker @AssistedInject constructor(
