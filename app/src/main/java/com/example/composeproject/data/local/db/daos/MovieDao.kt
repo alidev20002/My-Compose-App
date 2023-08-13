@@ -1,5 +1,6 @@
 package com.example.composeproject.data.local.db.daos
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    fun getAllMovies(): Flow<List<MovieEntity>>
+    fun getAllMovies(): PagingSource<Int, MovieEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOrIgnoreMovie(movie: MovieEntity)

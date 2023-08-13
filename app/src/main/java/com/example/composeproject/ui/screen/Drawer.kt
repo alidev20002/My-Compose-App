@@ -1,4 +1,4 @@
-package com.example.composeproject.ui
+package com.example.composeproject.ui.screen
 
 import android.app.Activity
 import androidx.compose.foundation.Image
