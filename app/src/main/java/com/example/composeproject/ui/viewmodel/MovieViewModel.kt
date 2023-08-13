@@ -8,7 +8,6 @@ import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class MovieViewModel @Inject constructor(
     val movieDetail: FullMovie?
         get() = _movieDetail
 
-    var job: Job? = null
+    private var job: Job? = null
 
     init {
         job = viewModelScope.launch {
