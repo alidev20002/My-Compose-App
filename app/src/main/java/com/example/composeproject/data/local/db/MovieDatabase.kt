@@ -8,8 +8,9 @@ import androidx.room.TypeConverters
 import com.example.composeproject.data.local.db.converters.MovieConverter
 import com.example.composeproject.data.local.db.daos.MovieDao
 import com.example.composeproject.data.local.db.entities.MovieEntity
+import com.example.composeproject.data.local.db.migration.MIGRATION_1_2
 
-@Database(entities = [MovieEntity::class], version = 1)
+@Database(entities = [MovieEntity::class], version = 2)
 @TypeConverters(MovieConverter::class)
 abstract class MovieDatabase: RoomDatabase() {
     abstract fun movieDao(): MovieDao
@@ -26,7 +27,9 @@ abstract class MovieDatabase: RoomDatabase() {
                         context.applicationContext,
                         MovieDatabase::class.java,
                         "movie_database"
-                    ).build()
+                    )
+                        .addMigrations(MIGRATION_1_2)
+                        .build()
                     INSTANCE = instance
                 }
                 INSTANCE!!

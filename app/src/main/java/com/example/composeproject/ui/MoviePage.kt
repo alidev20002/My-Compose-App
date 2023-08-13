@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,8 +64,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.composeproject.viewmodel.MovieViewModel
+import com.example.composeproject.ui.viewmodel.MovieViewModel
 import com.example.composeproject.R
+import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.network.model.FullMovieData
 import kotlinx.coroutines.launch
 
@@ -73,7 +75,7 @@ import kotlinx.coroutines.launch
 fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-
+        val movies = movieViewModel.allMovies.collectAsState(initial = emptyList()).value
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var textfield by remember { mutableStateOf("") }
@@ -109,7 +111,7 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                             value = textfield,
                             onValueChange = {
                                 textfield = it
-                                movieViewModel.updateQuery(it)
+//                                movieViewModel.updateQuery(it)
                             },
                             leadingIcon = {
                                 Icon(imageVector = Icons.Filled.Search, contentDescription = null)
@@ -164,9 +166,9 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                             selected = selectedItem == index,
                             onClick = {
                                 if (item == "Next") {
-                                    movieViewModel.nextPage()
+//                                    movieViewModel.nextPage()
                                 }else{
-                                    movieViewModel.previousPage()
+//                                    movieViewModel.previousPage()
                                 }
                             },
                             icon = {}
@@ -188,7 +190,7 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                         .padding(start = 10.dp, end = 10.dp, top = 30.dp),
                         columns = if (isPortrait) GridCells.Fixed(3) else GridCells.Fixed(5)
                     ) {
-                        items(movieViewModel.movieListResponse.data) { movie ->
+                        items(movies) { movie ->
 
                             Card(elevation = 8.dp,
                                 shape = RoundedCornerShape(8.dp),
@@ -199,7 +201,7 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                                     contentDescription = null,
                                     modifier = Modifier
                                         .clickable {
-                                            movieViewModel.updateFullMovieQuery(movie.title)
+                                            movieViewModel.updateMovieDetail(movie)
                                             navController.navigate("fullMovie")
                                         }
                                         .clip(
@@ -219,133 +221,129 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FullMoviePage(fullMovieData: FullMovieData, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
+fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-        if (fullMovieData.data.isNotEmpty()) {
-            // full movie ui
-            val movie = fullMovieData.data[0]
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())) {
 
-                Box(modifier = Modifier) {
+            Box(modifier = Modifier) {
 
-                    GlideImage(model = movie.poster,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .height(300.dp)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(0.dp, 0.dp, 32.dp, 32.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
-
-                    IconButton(modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(10.dp),
-                        onClick = {
-                            navController.navigate("movie") {
-                                popUpTo("fullMovie") {
-                                    inclusive = true
-                                }
-                            }
-                        }) {
-
-                        Box(modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.White.copy(0.4F), CircleShape)
-                        ) {
-                            Icon(imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
-
-                    IconButton(modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(10.dp),onClick = { onChangeTheme() }) {
-
-                        Box(modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.White.copy(0.4F), CircleShape)
-                        ) {
-
-                            Icon(painter = if (isLightTheme) painterResource(id = R.drawable.moon) else painterResource(
-                                R.drawable.sun),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.Center),
-                                tint = Color.Black
-                            )
-                        }
-                    }
-                }
-
-                Text(text = movie.title,
-                    style = MaterialTheme.typography.h4,
-                    modifier = Modifier.padding(10.dp))
-
-                if (movie.genres?.isNotEmpty() == true) {
-
-                    LazyRow(modifier = Modifier
+                GlideImage(model = fullMovie.poster,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(300.dp)
                         .fillMaxWidth()
-                        .padding(start = 10.dp)) {
+                        .clip(RoundedCornerShape(0.dp, 0.dp, 32.dp, 32.dp)),
+                    contentScale = ContentScale.Crop,
+                )
 
-                        items(movie.genres) {item ->
-
-                            OutlinedButton(
-                                onClick = { /*TODO*/ },
-                                border = BorderStroke(1.dp, Color.Black),
-                                modifier = Modifier.padding(start = 8.dp)
-                            ) {
-                                Text(text = item)
+                IconButton(modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(10.dp),
+                    onClick = {
+                        navController.navigate("movie") {
+                            popUpTo("fullMovie") {
+                                inclusive = true
                             }
                         }
+                    }) {
+
+                    Box(modifier = Modifier
+                        .size(40.dp)
+                        .background(Color.White.copy(0.4F), CircleShape)
+                    ) {
+                        Icon(imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
 
-                Row(modifier = Modifier.padding(start = 18.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
+                IconButton(modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(10.dp),onClick = { onChangeTheme() }) {
 
-                    Image(painter = painterResource(id = R.drawable.imdb),
-                        contentDescription = "imdb",
-                        modifier = Modifier.width(50.dp)
-                    )
+                    Box(modifier = Modifier
+                        .size(40.dp)
+                        .background(Color.White.copy(0.4F), CircleShape)
+                    ) {
 
-                    Text(text = movie.imdb_rating, style = MaterialTheme.typography.subtitle1)
-
-                    Text(text = movie.country,
-                        style = MaterialTheme.typography.subtitle1,
-                        color = MaterialTheme.colors.onSurface,
-                        modifier = Modifier.padding(start = 20.dp, end = 5.dp)
-                    )
-
-                    Text(text = movie.year,
-                        style = MaterialTheme.typography.subtitle1,
-                        color = MaterialTheme.colors.onSurface)
+                        Icon(painter = if (isLightTheme) painterResource(id = R.drawable.moon) else painterResource(
+                            R.drawable.sun),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.Center),
+                            tint = Color.Black
+                        )
+                    }
                 }
+            }
 
-                if (movie.images?.isNotEmpty() == true) {
+            Text(text = fullMovie.title,
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.padding(10.dp))
 
-                    LazyRow(modifier = Modifier.padding(top = 10.dp)) {
+            if (fullMovie.genres?.isNotEmpty() == true) {
 
-                        items(movie.images) { image ->
+                LazyRow(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp)) {
 
-                            Card(elevation = 8.dp,
+                    items(fullMovie.genres) {item ->
+
+                        OutlinedButton(
+                            onClick = { /*TODO*/ },
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(start = 8.dp)
+                        ) {
+                            Text(text = item)
+                        }
+                    }
+                }
+            }
+
+            Row(modifier = Modifier.padding(start = 18.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+
+                Image(painter = painterResource(id = R.drawable.imdb),
+                    contentDescription = "imdb",
+                    modifier = Modifier.width(50.dp)
+                )
+
+                Text(text = fullMovie.imdb_rating, style = MaterialTheme.typography.subtitle1)
+
+                Text(text = fullMovie.country,
+                    style = MaterialTheme.typography.subtitle1,
+                    color = MaterialTheme.colors.onSurface,
+                    modifier = Modifier.padding(start = 20.dp, end = 5.dp)
+                )
+
+                Text(text = fullMovie.year,
+                    style = MaterialTheme.typography.subtitle1,
+                    color = MaterialTheme.colors.onSurface)
+            }
+
+            if (fullMovie.images?.isNotEmpty() == true) {
+
+                LazyRow(modifier = Modifier.padding(top = 10.dp)) {
+
+                    items(fullMovie.images) { image ->
+
+                        Card(elevation = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)) {
+
+                            GlideImage(model = image,
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)) {
-
-                                GlideImage(model = image,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .height(200.dp)
-                                        .width(300.dp),
-                                    contentScale = ContentScale.Crop,
-                                )
-                            }
+                                    .height(200.dp)
+                                    .width(300.dp),
+                                contentScale = ContentScale.Crop,
+                            )
                         }
                     }
                 }

@@ -20,34 +20,34 @@ class MovieViewModel: ViewModel() {
 
     var fullMovieResponse: FullMovieData by mutableStateOf(FullMovieData(listOf()))
 
-    fun getMovieList() {
-        viewModelScope.launch {
-            val apiService = ApiMovie.getInstance()
-            try {
-                val movieList = apiService.getData(page, query)
-                movieListResponse = movieList
-            }
-            catch (e: Exception) {
-                errorMessage = e.message.toString()
-                Log.e("message", errorMessage)
-            }
-        }
-    }
-
-    fun getFullMovie() {
-        viewModelScope.launch {
-            val apiService = ApiMovie.getInstance()
-            try {
-                val movieList = apiService.getData(fullMovieQuery)
-                fullMovieResponse = movieList
-                Log.e("message", fullMovieResponse.data[0].title)
-            }
-            catch (e: Exception) {
-                errorMessage = e.message.toString()
-                Log.e("message", errorMessage)
-            }
-        }
-    }
+//    fun getMovieList() {
+//        viewModelScope.launch {
+//            val apiService = ApiMovie.getInstance()
+//            try {
+//                val movieList = apiService.getData(page, query)
+//                movieListResponse = movieList
+//            }
+//            catch (e: Exception) {
+//                errorMessage = e.message.toString()
+//                Log.e("message", errorMessage)
+//            }
+//        }
+//    }
+//
+//    fun getFullMovie() {
+//        viewModelScope.launch {
+//            val apiService = ApiMovie.getInstance()
+//            try {
+//                val movieList = apiService.getData(fullMovieQuery)
+//                fullMovieResponse = movieList
+//                Log.e("message", fullMovieResponse.data[0].title)
+//            }
+//            catch (e: Exception) {
+//                errorMessage = e.message.toString()
+//                Log.e("message", errorMessage)
+//            }
+//        }
+//    }
 
     fun nextPage() {
         if (page < 25)

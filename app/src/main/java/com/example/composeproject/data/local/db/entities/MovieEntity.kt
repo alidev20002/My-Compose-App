@@ -6,8 +6,8 @@ import com.example.composeproject.data.network.model.FullMovie
 
 @Entity(tableName = "movie")
 data class MovieEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    val id: Int,
     val title: String,
     val poster: String,
     val year: String,
@@ -19,6 +19,7 @@ data class MovieEntity(
 
 fun MovieEntity.toFullMovieModel(): FullMovie {
     return FullMovie(
+        id = id,
         title = this.title,
         poster = this.poster,
         year = this.year,
