@@ -1,6 +1,7 @@
 package com.example.composeproject
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -19,20 +20,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.composeproject.data.local.db.daos.MovieDao
-import com.example.composeproject.data.local.db.entities.MovieEntity
+import com.example.composeproject.data.network.api.KtorTest
+import com.example.composeproject.data.network.api.RefreshAccessToken
+import com.example.composeproject.ui.screen.CryptoPage
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
 import com.example.composeproject.ui.theme.ComposeProjectTheme
-import com.example.composeproject.viewmodel.CryptoViewModel
+import com.example.composeproject.ui.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
 
     @Inject
@@ -42,18 +47,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // this is test area and will be removed soon
+        val ktorTest = KtorTest()
+        var token: RefreshAccessToken
         lifecycleScope.launch {
-            for (i in 1..100) {
-                movieDao.insertOrIgnoreMovie(
-                    MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
-                )
-            }
+            token = ktorTest.login("09999999999", "12345")
+            Log.i("alitest", "onCreate: $token")
+            val data = ktorTest.getData()
+            Log.i("alitest", "onCreate: $data")
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(12000)
+            val data = ktorTest.getData()
+            Log.i("alitest", "onCreate: $data")
         }
 
         // #########################################
 
         setContent {
             val movieViewModel = viewModel<com.example.composeproject.ui.viewmodel.MovieViewModel>()
+            val cryptoViewModel = viewModel<CryptoViewModel>()
             var isLightTheme by rememberSaveable { mutableStateOf(true) }
             val navController = rememberNavController()
 
@@ -86,10 +99,10 @@ class MainActivity : ComponentActivity() {
                                 isLightTheme = !isLightTheme
                             }
                         }
-//                        composable("crypto") {
-//                            CryptoPage(cryptoViewModel.cryptoStats)
-//                            cryptoViewModel.getCryptoStats()
-//                        }
+                        composable("crypto") {
+                            CryptoPage(cryptoViewModel.cryptoStats)
+                        }
+                        cryptoViewModel.getCryptoStats()
 //                        composable("task") {
 //                            TaskList(taskViewModel)
 //                        }

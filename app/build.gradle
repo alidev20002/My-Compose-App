@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -66,6 +67,15 @@ dependencies {
 
     // Data Store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Ktor for Android
+    implementation 'io.ktor:ktor-client-core:2.1.2'
+    implementation 'io.ktor:ktor-client-serialization:2.1.2'
+    implementation 'io.ktor:ktor-client-content-negotiation:2.0.0'
+    implementation 'io.ktor:ktor-serialization-kotlinx-json:2.0.0'
+    implementation 'io.ktor:ktor-client-okhttp:2.0.0'
+    implementation 'io.ktor:ktor-client-logging-jvm:2.1.2'
+    implementation 'io.ktor:ktor-client-auth:2.1.2'
 
 
     implementation 'androidx.core:core-ktx:1.7.0'
