@@ -14,13 +14,10 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -29,7 +26,7 @@ import kotlinx.serialization.json.Json
 
 class KtorTest {
 
-    private var currentToken = Token("", "")
+    private var currentToken = RefreshAccessToken()
 
     private val client = HttpClient(OkHttp).config {
         defaultRequest {
@@ -59,8 +56,8 @@ class KtorTest {
                     val token = client.post {
                         markAsRefreshTokenRequest()
                         url("token/refresh/")
-                        parameter("refresh", currentToken.refresh)
-                    }.body<RefreshToken>()
+                        setBody(RefreshAccessToken(refresh = currentToken.refresh))
+                    }.body<RefreshAccessToken>()
                     BearerTokens(
                         accessToken = token.access,
                         refreshToken = token.refresh
@@ -70,38 +67,17 @@ class KtorTest {
         }
     }
 
-    suspend fun login(phoneNumber: String, password: String): Token {
+    suspend fun login(phoneNumber: String, password: String): RefreshAccessToken {
         currentToken = client.post {
             url("token/")
             setBody(User(phoneNumber, password))
         }.body()
-        client.config {
-            install(Auth) {
-                bearer {
-                    refreshTokens {
-                        val token = client.post {
-                            markAsRefreshTokenRequest()
-                            url("token/refresh/")
-                            parameter("refresh", currentToken.refresh)
-                        }.body<RefreshToken>()
-                        BearerTokens(
-                            accessToken = token.access,
-                            refreshToken = token.refresh
-                        )
-                    }
-                }
-            }
-        }
         return currentToken
     }
 
-    suspend fun getData(token: Token): List<User> {
-        val accessToken = token.access
+    suspend fun getData(): List<User> {
         return client.get {
             url("users/")
-            headers {
-                append(HttpHeaders.Authorization, "Bearer $accessToken")
-            }
         }.body()
     }
 }
@@ -112,15 +88,8 @@ data class User(
     val password: String
 )
 
-
 @Serializable
-data class Token(
-    val access: String,
-    val refresh: String
-)
-
-@Serializable
-data class RefreshToken(
-    val access: String,
+data class RefreshAccessToken(
+    val access: String = "",
     val refresh: String = ""
 )
