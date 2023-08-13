@@ -36,6 +36,7 @@ import com.example.composeproject.ui.screen.SplashScreen
 import com.example.composeproject.ui.screen.TaskList
 import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.ui.viewmodel.CryptoViewModel
+import com.example.composeproject.ui.viewmodel.MovieViewModel
 import com.example.composeproject.ui.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -84,7 +85,7 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            val movieViewModel = viewModel<com.example.composeproject.ui.viewmodel.MovieViewModel>()
+            val movieViewModel = viewModel<MovieViewModel>()
             val cryptoViewModel = viewModel<CryptoViewModel>()
             var isLightTheme by rememberSaveable { mutableStateOf(true) }
             val navController = rememberNavController()
@@ -100,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = "movie"
+                        startDestination = "splash"
                     ) {
 
                         composable("splash") {
