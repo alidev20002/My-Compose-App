@@ -3,6 +3,7 @@ package com.example.composeproject.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.composeproject.data.network.model.FullMovie
 import com.example.composeproject.data.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,7 @@ class MovieViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _allMovies = MutableStateFlow<PagingData<FullMovie>>(PagingData.empty())
-    val allMovies = _allMovies.asStateFlow()
+    val allMovies = _allMovies.asStateFlow().cachedIn(viewModelScope)
 
     private var _movieDetail: FullMovie? = null
     val movieDetail: FullMovie?
