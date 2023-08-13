@@ -1,7 +1,5 @@
 package com.example.composeproject.ui.screen
 
-import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,8 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -54,11 +50,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,9 +61,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.composeproject.ui.viewmodel.MovieViewModel
 import com.example.composeproject.R
 import com.example.composeproject.data.network.model.FullMovie
+import com.example.composeproject.ui.viewmodel.MovieViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -86,12 +80,6 @@ fun MoviePage(
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var textfield by remember { mutableStateOf("") }
-        val isPortrait =
-            LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-
-        val selectedItem by remember { mutableStateOf(0) }
-        val items = listOf("Previous", "Next")
-
         val scrollState = rememberLazyGridState()
 
         Scaffold(modifier = Modifier.fillMaxSize(),
@@ -162,36 +150,6 @@ fun MoviePage(
                     elevation = 0.dp
                 )
             },
-            bottomBar = {
-                BottomNavigation(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp))
-                ) {
-                    items.forEachIndexed { index, item ->
-                        BottomNavigationItem(
-                            label = {
-                                Text(
-                                    item,
-                                    color = MaterialTheme.colors.onBackground,
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.h5
-                                )
-                            },
-                            selected = selectedItem == index,
-                            onClick = {
-                                if (item == "Next") {
-//                                    movieViewModel.nextPage()
-                                } else {
-//                                    movieViewModel.previousPage()
-                                }
-                            },
-                            icon = {}
-                        )
-                    }
-                }
-            },
             drawerContent = {
                 DrawerContent(navController = navController)
             },
@@ -211,13 +169,13 @@ fun MoviePage(
                         state = scrollState
                     ) {
                         val moviesList = movies.itemSnapshotList.items.filter {
-                            it.poster.endsWith(".jpg")
+                            it.poster!!.endsWith(".jpg")
                         }
                         items(
                             moviesList.size,
                         ) { index ->
                             movies[index]?.let {
-                                if (it.poster.endsWith(".jpg")) {
+                                if (it.poster!!.endsWith(".jpg")) {
                                     Card(
                                         elevation = 8.dp,
                                         shape = RoundedCornerShape(8.dp),
@@ -242,8 +200,8 @@ fun MoviePage(
                             }
                         }
                         movies.apply {
-                            when {
-                                loadState.refresh is LoadState.Loading -> {
+                            when (loadState.refresh) {
+                                is LoadState.Loading -> {
                                     item {
                                         CircularProgressIndicator(
                                             modifier = Modifier
@@ -252,9 +210,11 @@ fun MoviePage(
                                     }
                                 }
 
-                                loadState.refresh is LoadState.Error -> {
+                                is LoadState.Error -> {
                                     // Error
                                 }
+
+                                else -> {}
                             }
                         }
                     }
@@ -341,12 +301,12 @@ fun FullMoviePage(
             }
 
             Text(
-                text = fullMovie.title,
+                text = fullMovie.title!!,
                 style = MaterialTheme.typography.h4,
                 modifier = Modifier.padding(10.dp)
             )
 
-            if (fullMovie.genres?.isNotEmpty() == true) {
+            if (fullMovie.genres!!.isNotEmpty()) {
 
                 LazyRow(
                     modifier = Modifier
@@ -378,17 +338,17 @@ fun FullMoviePage(
                     modifier = Modifier.width(50.dp)
                 )
 
-                Text(text = fullMovie.imdb_rating, style = MaterialTheme.typography.subtitle1)
+                Text(text = fullMovie.imdb_rating!!, style = MaterialTheme.typography.subtitle1)
 
                 Text(
-                    text = fullMovie.country,
+                    text = fullMovie.country!!,
                     style = MaterialTheme.typography.subtitle1,
                     color = MaterialTheme.colors.onSurface,
                     modifier = Modifier.padding(start = 20.dp, end = 5.dp)
                 )
 
                 Text(
-                    text = fullMovie.year,
+                    text = fullMovie.year!!,
                     style = MaterialTheme.typography.subtitle1,
                     color = MaterialTheme.colors.onSurface
                 )
