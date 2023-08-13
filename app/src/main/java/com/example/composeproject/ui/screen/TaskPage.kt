@@ -33,7 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.composeproject.viewmodel.TaskViewModel
+import com.example.composeproject.ui.viewmodel.TaskViewModel
 
 @Composable
 fun TaskList(taskViewModel: TaskViewModel) {

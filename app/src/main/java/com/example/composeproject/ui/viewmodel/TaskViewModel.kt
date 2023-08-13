@@ -1,4 +1,4 @@
-package com.example.composeproject.viewmodel
+package com.example.composeproject.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

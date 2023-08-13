@@ -36,7 +36,7 @@ import com.example.composeproject.ui.screen.SplashScreen
 import com.example.composeproject.ui.screen.TaskList
 import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.ui.viewmodel.CryptoViewModel
-import com.example.composeproject.viewmodel.TaskViewModel
+import com.example.composeproject.ui.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
