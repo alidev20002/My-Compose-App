@@ -121,7 +121,7 @@ fun MoviePage(
                             value = textfield,
                             onValueChange = {
                                 textfield = it
-//                                movieViewModel.updateQuery(it)
+                                movieViewModel.searchMovie(it)
                             },
                             leadingIcon = {
                                 Icon(imageVector = Icons.Filled.Search, contentDescription = null)
