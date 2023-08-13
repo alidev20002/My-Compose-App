@@ -20,9 +20,16 @@ class MovieViewModel @Inject constructor(
     val allMovies = _allMovies.asStateFlow()
 
     private var _movieDetail: FullMovie? = null
-
     val movieDetail: FullMovie?
         get() = _movieDetail
+
+    init {
+        viewModelScope.launch {
+            movieRepository.getMovies("").collect {
+                _allMovies.emit(it)
+            }
+        }
+    }
 
     fun updateMovieDetail(movie: FullMovie) {
         _movieDetail = movie
