@@ -19,10 +19,10 @@ class MovieRepository @Inject constructor(
     private val movieLocalDataSource: MovieLocalDataSource,
     private val movieRemoteDataSource: MovieRemoteDataSource,
     private val pageDataStore: PageDataStore
-): MovieRepositoryInterface {
+) : MovieRepositoryInterface {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getMovies(): Flow<PagingData<FullMovie>> {
+    override fun getMovies(query: String): Flow<PagingData<FullMovie>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             remoteMediator = MoviesRemoteMediator(
@@ -30,7 +30,10 @@ class MovieRepository @Inject constructor(
                 movieRemoteDataSource,
                 pageDataStore
             ),
-            pagingSourceFactory = { movieLocalDataSource.getAllMovies() }
+            pagingSourceFactory = {
+                if (query.isEmpty()) movieLocalDataSource.getAllMovies()
+                else movieLocalDataSource.searchMovie(query)
+            }
         ).flow
             .mapPagingData { it.toFullMovieModel() }
     }
