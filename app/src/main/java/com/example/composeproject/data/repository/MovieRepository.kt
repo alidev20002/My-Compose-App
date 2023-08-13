@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.example.composeproject.data.local.db.MovieLocalDataSource
 import com.example.composeproject.data.local.db.entities.toFullMovieModel
+import com.example.composeproject.data.local.keyvalue.PageDataStore
 import com.example.composeproject.data.mediator.MoviesRemoteMediator
 import com.example.composeproject.data.network.MovieRemoteDataSource
 import com.example.composeproject.data.network.model.FullMovie
@@ -16,14 +17,19 @@ import javax.inject.Inject
 
 class MovieRepository @Inject constructor(
     private val movieLocalDataSource: MovieLocalDataSource,
-    private val movieRemoteDataSource: MovieRemoteDataSource
+    private val movieRemoteDataSource: MovieRemoteDataSource,
+    private val pageDataStore: PageDataStore
 ): MovieRepositoryInterface {
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getMovies(): Flow<PagingData<FullMovie>> {
         return Pager(
             config = PagingConfig(pageSize = 10),
-            remoteMediator = MoviesRemoteMediator(movieLocalDataSource, movieRemoteDataSource),
+            remoteMediator = MoviesRemoteMediator(
+                movieLocalDataSource,
+                movieRemoteDataSource,
+                pageDataStore
+            ),
             pagingSourceFactory = { movieLocalDataSource.getAllMovies() }
         ).flow
             .mapPagingData { it.toFullMovieModel() }

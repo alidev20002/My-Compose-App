@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -62,7 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.composeproject.ui.viewmodel.MovieViewModel
@@ -72,25 +73,34 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
+fun MoviePage(
+    movieViewModel: MovieViewModel,
+    movies: LazyPagingItems<FullMovie>,
+    isLightTheme: Boolean,
+    navController: NavController,
+    onChangeTheme: () -> Unit,
+) {
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        val movies = movieViewModel.allMovies.collectAsLazyPagingItems()
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var textfield by remember { mutableStateOf("") }
-        val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+        val isPortrait =
+            LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
         val selectedItem by remember { mutableStateOf(0) }
         val items = listOf("Previous", "Next")
+
+        val scrollState = rememberLazyGridState()
 
         Scaffold(modifier = Modifier.fillMaxSize(),
             scaffoldState = scaffoldState,
             backgroundColor = MaterialTheme.colors.background,
             topBar = {
-                TopAppBar(modifier = Modifier
-                    .height(85.dp)
-                    .padding(top = 15.dp),
+                TopAppBar(
+                    modifier = Modifier
+                        .height(85.dp)
+                        .padding(top = 15.dp),
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -121,7 +131,7 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                                 .height(70.dp),
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = MaterialTheme.colors.surface,
-                                focusedIndicatorColor =  Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
                                 textColor = MaterialTheme.colors.onSurface,
                                 disabledTextColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
@@ -152,22 +162,27 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                 )
             },
             bottomBar = {
-                BottomNavigation(backgroundColor = MaterialTheme.colors.surface,
+                BottomNavigation(
+                    backgroundColor = MaterialTheme.colors.surface,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp))) {
+                        .clip(RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp))
+                ) {
                     items.forEachIndexed { index, item ->
                         BottomNavigationItem(
-                            label = { Text(item,
-                                color = MaterialTheme.colors.onBackground,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.h5)
-                                    },
+                            label = {
+                                Text(
+                                    item,
+                                    color = MaterialTheme.colors.onBackground,
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.h5
+                                )
+                            },
                             selected = selectedItem == index,
                             onClick = {
                                 if (item == "Next") {
 //                                    movieViewModel.nextPage()
-                                }else{
+                                } else {
 //                                    movieViewModel.previousPage()
                                 }
                             },
@@ -181,66 +196,29 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
             },
             content = { paddingValues ->
 
-                Column(modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                ) {
 
-//                    LazyColumn {
-//                        itemsIndexed(
-//                            items = movies,
-//                        ) {_, movie ->
-//                            movie?.let {
-//                                Card(elevation = 8.dp,
-//                                    shape = RoundedCornerShape(8.dp),
-//                                    modifier = Modifier
-//                                        .padding(8.dp)) {
-//
-//                                    GlideImage(model = movie?.poster,
-//                                        contentDescription = null,
-//                                        modifier = Modifier
-//                                            .clickable {
-//                                                movieViewModel.updateMovieDetail(movie!!)
-//                                                navController.navigate("fullMovie")
-//                                            }
-//                                            .clip(
-//                                                RoundedCornerShape(8.dp)
-//                                            )
-//                                            .height(150.dp),
-//                                        contentScale = ContentScale.Crop
-//                                    )
-//                                }
-//                            }
-//                        }
-//                        movies.apply {
-//                            when {
-//                                loadState.refresh is LoadState.Loading -> {
-//                                    item {
-//                                        CircularProgressIndicator(
-//                                            modifier = Modifier
-//                                                .padding(16.dp)
-//                                        )
-//                                    }
-//                                }
-//                                loadState.refresh is LoadState.Error -> {
-//                                    // Error
-//                                }
-//                            }
-//                        }
-//                    }
-
-                    LazyVerticalGrid(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, top = 30.dp),
-                        columns = if (isPortrait) GridCells.Fixed(3) else GridCells.Fixed(5)
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, end = 10.dp, top = 30.dp),
+                        columns = GridCells.Fixed(3),
+                        state = scrollState
                     ) {
                         items(
                             movies.itemCount,
                         ) { index ->
                             movies[index]?.let {
-                                Card(elevation = 8.dp,
+                                Card(
+                                    elevation = 8.dp,
                                     shape = RoundedCornerShape(8.dp),
                                     modifier = Modifier
-                                        .padding(8.dp)) {
+                                        .padding(8.dp)
+                                ) {
 
                                     GlideImage(model = it.poster,
                                         contentDescription = null,
@@ -268,6 +246,7 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
                                         )
                                     }
                                 }
+
                                 loadState.refresh is LoadState.Error -> {
                                     // Error
                                 }
@@ -282,16 +261,24 @@ fun MoviePage(movieViewModel: MovieViewModel, isLightTheme: Boolean, navControll
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: NavController, onChangeTheme: () -> Unit) {
+fun FullMoviePage(
+    fullMovie: FullMovie,
+    isLightTheme: Boolean,
+    navController: NavController,
+    onChangeTheme: () -> Unit
+) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
 
             Box(modifier = Modifier) {
 
-                GlideImage(model = fullMovie.poster,
+                GlideImage(
+                    model = fullMovie.poster,
                     contentDescription = null,
                     modifier = Modifier
                         .height(300.dp)
@@ -311,11 +298,13 @@ fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: Na
                         }
                     }) {
 
-                    Box(modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.White.copy(0.4F), CircleShape)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color.White.copy(0.4F), CircleShape)
                     ) {
-                        Icon(imageVector = Icons.Filled.ArrowBack,
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
                             tint = Color.Black,
                             modifier = Modifier.align(Alignment.Center)
@@ -325,15 +314,18 @@ fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: Na
 
                 IconButton(modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(10.dp),onClick = { onChangeTheme() }) {
+                    .padding(10.dp), onClick = { onChangeTheme() }) {
 
-                    Box(modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.White.copy(0.4F), CircleShape)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color.White.copy(0.4F), CircleShape)
                     ) {
 
-                        Icon(painter = if (isLightTheme) painterResource(id = R.drawable.moon) else painterResource(
-                            R.drawable.sun),
+                        Icon(
+                            painter = if (isLightTheme) painterResource(id = R.drawable.moon) else painterResource(
+                                R.drawable.sun
+                            ),
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.Center),
@@ -343,17 +335,21 @@ fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: Na
                 }
             }
 
-            Text(text = fullMovie.title,
+            Text(
+                text = fullMovie.title,
                 style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(10.dp))
+                modifier = Modifier.padding(10.dp)
+            )
 
             if (fullMovie.genres?.isNotEmpty() == true) {
 
-                LazyRow(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp)) {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp)
+                ) {
 
-                    items(fullMovie.genres) {item ->
+                    items(fullMovie.genres) { item ->
 
                         OutlinedButton(
                             onClick = { /*TODO*/ },
@@ -366,25 +362,31 @@ fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: Na
                 }
             }
 
-            Row(modifier = Modifier.padding(start = 18.dp),
-                verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(start = 18.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                Image(painter = painterResource(id = R.drawable.imdb),
+                Image(
+                    painter = painterResource(id = R.drawable.imdb),
                     contentDescription = "imdb",
                     modifier = Modifier.width(50.dp)
                 )
 
                 Text(text = fullMovie.imdb_rating, style = MaterialTheme.typography.subtitle1)
 
-                Text(text = fullMovie.country,
+                Text(
+                    text = fullMovie.country,
                     style = MaterialTheme.typography.subtitle1,
                     color = MaterialTheme.colors.onSurface,
                     modifier = Modifier.padding(start = 20.dp, end = 5.dp)
                 )
 
-                Text(text = fullMovie.year,
+                Text(
+                    text = fullMovie.year,
                     style = MaterialTheme.typography.subtitle1,
-                    color = MaterialTheme.colors.onSurface)
+                    color = MaterialTheme.colors.onSurface
+                )
             }
 
             if (fullMovie.images?.isNotEmpty() == true) {
@@ -393,12 +395,15 @@ fun FullMoviePage(fullMovie: FullMovie, isLightTheme: Boolean, navController: Na
 
                     items(fullMovie.images) { image ->
 
-                        Card(elevation = 8.dp,
+                        Card(
+                            elevation = 8.dp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)) {
+                                .padding(8.dp)
+                        ) {
 
-                            GlideImage(model = image,
+                            GlideImage(
+                                model = image,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .height(200.dp)

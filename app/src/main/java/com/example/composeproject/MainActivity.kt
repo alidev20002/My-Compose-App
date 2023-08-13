@@ -12,16 +12,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.composeproject.data.local.db.daos.MovieDao
+import com.example.composeproject.data.local.db.entities.MovieEntity
 import com.example.composeproject.ui.screen.FullMoviePage
 import com.example.composeproject.ui.screen.MoviePage
 import com.example.composeproject.ui.theme.ComposeProjectTheme
 import com.example.composeproject.viewmodel.CryptoViewModel
 import com.example.composeproject.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -29,10 +35,21 @@ class MainActivity : ComponentActivity() {
     private val cryptoViewModel by viewModels<CryptoViewModel>()
     private val taskViewModel by viewModels<TaskViewModel>()
 
+    @Inject
+    lateinit var movieDao: MovieDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // this is test area and will be removed soon
+        lifecycleScope.launch {
+            for (i in 1..100) {
+                movieDao.insertOrIgnoreMovie(
+                    MovieEntity(i, "m$i", "", "2001", "c$i", "", emptyList(), emptyList())
+                )
+            }
+        }
+
         // #########################################
 
         setContent {
@@ -45,6 +62,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background) {
 
+                    val movies = movieViewModel.allMovies.collectAsLazyPagingItems()
+
                     NavHost(navController = navController,
                         startDestination = "movie") {
 
@@ -52,7 +71,9 @@ class MainActivity : ComponentActivity() {
 //                            SplashScreen(navController)
 //                        }
                         composable("movie") {
-                            MoviePage(movieViewModel,
+                            MoviePage(
+                                movieViewModel,
+                                movies,
                                 isLightTheme,
                                 navController,
                                 onChangeTheme = {isLightTheme = !isLightTheme}
