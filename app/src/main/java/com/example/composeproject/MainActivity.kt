@@ -83,8 +83,6 @@ class MainActivity : ComponentActivity() {
             movieWorkRequest
         )
 
-        // #########################################
-
         setContent {
             val movieViewModel = viewModel<com.example.composeproject.ui.viewmodel.MovieViewModel>()
             val cryptoViewModel = viewModel<CryptoViewModel>()
