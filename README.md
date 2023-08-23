@@ -8,13 +8,13 @@ This app contains 3 parts:
 In the movie page, top IMDb movies are displayed, which are loaded from an API. In the crypto page, the last price of famous cryptocurrencies is loaded from an API and displayed in a list. Finally, the task page is a simple To-Do list where users can add and remove tasks. To ensure good performance, reusability and separating the UI logic from business logic, I implemented the MVVM architecture to update the UI using view models.
 
 ## Features
-* Design UI using Jetpack Compose.
-* Handle HTTP requests using the Kotlin Ktor library.
-* Implement Dependency Injection using Hilt.
-* Save data into a local database using Room.
-* Utilize Remote Mediator and Paging to load data.
-* Update local data periodically from remote servers in the background using WorkManager.
-* Save key-value data using DataStore.
+* Design UI using Jetpack Compose
+* Handle HTTP requests using the Kotlin Ktor library
+* Implement Dependency Injection using Hilt
+* Save data into a local database using Room
+* Utilize Remote Mediator and Paging to load data
+* Update local data periodically from remote servers in the background using WorkManager
+* Save key-value data using DataStore
 * Lazy loading images using Glide library
 * Light and Dark theme
 * Splash Screen with animation
