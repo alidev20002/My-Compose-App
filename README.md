@@ -9,7 +9,7 @@ In the movie page, top IMDb movies are displayed, which are loaded from an API. 
 
 ## Features
 * Design UI using Jetpack Compose
-* Handle HTTP requests using the Kotlin Ktor library
+* Handle HTTP requests using the Kotlin Ktor and Retrofit library
 * Implement Dependency Injection using Hilt
 * Save data into a local database using Room
 * Utilize Remote Mediator and Paging to load data
