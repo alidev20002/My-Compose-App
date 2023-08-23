@@ -12,6 +12,7 @@ In the movie page, top IMDb movies are displayed, which are loaded from an API. 
 * Handle HTTP requests using the Kotlin Ktor and Retrofit library
 * Implement Dependency Injection using Hilt
 * Save data into a local database using Room
+* Offline-First app
 * Utilize Remote Mediator and Paging to load data
 * Update local data periodically from remote servers in the background using WorkManager
 * Save key-value data using DataStore
